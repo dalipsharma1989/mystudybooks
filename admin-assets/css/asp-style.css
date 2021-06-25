@@ -1,0 +1,165 @@
+﻿.init-validator {
+    position: relative;
+}
+
+.validator {
+    position: absolute;
+    top: 0;
+    right: 17px;
+    color: #cc3300 !important;
+    z-index: 999999;
+    font-size: 11px;
+}
+
+    .newsletter-validator {
+        font-size:15px;
+    }
+
+.photo-container {
+    display: inline-block;
+    position: relative;
+    margin: 10px;
+}
+
+    .photo-container img {
+        height: 100px;
+    }
+
+    .photo-container .del {
+        -webkit-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.61);
+    }
+
+.del:hover {
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    color: #000;
+    background: #fff;
+}
+
+
+.update-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.50);
+    z-index: 9999999;
+    text-align: center;
+}
+
+    .update-progress i {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        margin: auto;
+        color: #fff;
+    }
+
+.text-upper {
+    text-transform: uppercase;
+}
+
+.textarea-vertical {
+    resize: vertical;
+}
+
+/*ASP - BOOTSTRAP PAGINATION*/
+.asp-paging {
+    /*display: inline-block;*/
+    padding-left: 0;
+    margin: 20px 0;
+    border-radius: 0;
+}
+
+    .asp-paging table > tbody > tr > td {
+        display: inline;
+    }
+
+        .asp-paging table > tbody > tr > td > a,
+        .asp-paging table > tbody > tr > td > span {
+            position: relative;
+            float: left;
+            padding: 5px 9px;
+            line-height: 1.42857143;
+            text-decoration: none;
+            font-weight: bold;
+            color: #337AB7;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            margin-left: -1px;
+        }
+
+        .asp-paging table > tbody > tr > td > span {
+            position: relative;
+            float: left;
+            padding: 5px 9px;
+            line-height: 1.42857143;
+            text-decoration: none;
+            margin-left: -1px;
+            z-index: 2;
+            color: #aea79f;
+            background-color: #f5f5f5;
+            border-color: #dddddd;
+            cursor: default;
+        }
+
+        .asp-paging table > tbody > tr > td:first-child > a,
+        .asp-paging table > tbody > tr > td:first-child > span {
+            margin-left: 0;
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+        }
+
+        .asp-paging table > tbody > tr > td:last-child > a,
+        .asp-paging table > tbody > tr > td:last-child > span {
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .asp-paging table > tbody > tr > td > a:hover,
+        .asp-paging table > tbody > tr > td > span:hover,
+        .asp-paging table > tbody > tr > td > a:focus,
+        .asp-paging table > tbody > tr > td > span:focus {
+            color: #1D507C;
+            background-color: #eeeeee;
+            border-color: #dddddd;
+        }
+
+/*ASP - BOOTSTRAP PAGINATION*/
+
+
+/*ASP Update Progress*/
+.update-progress-fixed {
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255, 0.56);
+    text-align: center;
+}
+
+.update-progress-boxed {
+    position: relative;
+}
+
+    .update-progress-boxed .update-progress {
+        position: absolute;
+        z-index: 99999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.36);
+        text-align: center;
+    }
+/*ASP Update Progress*/

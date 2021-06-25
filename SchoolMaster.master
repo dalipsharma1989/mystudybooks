@@ -1,0 +1,113 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="SchoolMaster.master.cs" Inherits="SchoolMaster" %>
+<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+<%@ Register Src="~/CustomControls/footer.ascx" TagPrefix="uc1" TagName="footer" %>
+<!DOCTYPE html>
+<html  class="no-js" lang="en" >
+<head runat="server"> 
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title><%=System.Configuration.ConfigurationManager.AppSettings["CompanyName"]%></title> 
+    <meta name="description" content="MyStudyBooks has established itself as India's first, exclusive online book store for schools and other educational institutions. In a short period of time, MyStudyBooks has been recognized by some of the top Educational Institutions across the nation as  a one-stop portal for all educational needs, mystudybooks.in"> 
+    <meta name="keywords" content="MyStudyBooks, mystudybooks.in, shop, e-commerce, online store, business, school, Education, Stationary, Subhas Enterprizes" >
+    <meta name="author" content="MyStudyBooks">
+    <meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no" /> 
+    <!-- Favicon -->    
+    <meta name="google-site-verification" content="k_Sb-URb5MKJBevLtrpD7f8z-kr-AJKrY7gu1vd7Xss" />
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.jpg" />
+     
+    <link href="css/customecss/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">    
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/customecss/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/css.css" rel="stylesheet" />    
+    <link href="css/customecss/customcss.css" rel="stylesheet" />   
+    <link href="css/Ver_1.0/homeDCbooks.css" rel="stylesheet" /> 
+    <link rel="stylesheet" href="css/owl.carousel.css">     
+    <link href="css/customecss/styleslogin.css" rel="stylesheet" />
+    <script src="/js/vendor/jquery-1.12.0.min.js"></script>
+    <script src="/js/jquery-ui.min.js"></script>
+    <link href="css/Ver_1.1/styleDcbooks.css" rel="stylesheet" />
+    <link href="admin-assets/css/plugins/toastr/toastr.min.css" rel="stylesheet" />
+    <script src="/js/jquery.lazyload.min.js"></script>
+    <link href="css/customecss/style.min.css" rel="stylesheet" />
+    <link href="css/customecss/homeDCbooks.min.css" rel="stylesheet" />
+   <link href="css/customecss/homrPage.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .footer{
+            margin-top:0 !important;
+        }
+        .headerRow{
+            background: #f7dfc8a6;
+        }
+    </style>
+    <asp:ContentPlaceHolder id="head" runat="server"> </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server" autocomplete="off">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" LoadScriptsBeforeUI="true"   EnablePageMethods="true"> </asp:ScriptManager>
+        <div class  ="header-wrapper">
+            <div class="row main-header">                                                                     
+                <div class="col-lg-3 col-md-3 col-xm-1">
+                    <a href="/school/school.aspx" >
+                        <img style="max-width:200px;"  id="websitelogo" src="/img/logo.jpg" alt="<%=System.Configuration.ConfigurationManager.AppSettings["CompanyName"]%>">
+                    </a>                        
+                </div>
+                <div class="col-lg-6 col-md-6 col-xm-10 col-xs-9 search">
+                    <%--<uc1:SearchBook runat="server" ID="SearchBook" />                        --%>
+                </div>
+                <div class="col-lg-3 col-md-3 col-xm-1 col-xs-3 carts" style="padding-top: 25px;">
+                    <a  class="actives" href="/" style="font-size: 20px;font-weight: 900;border: 1px solid #f59744;box-shadow: 5px 5px 10px 5px grey;padding: 5px 60px;color:white;margin:30px;">Book Store</a>                        
+                    <div class="cart-item-wrapper" style="display:none;">                        
+                        <a href="Customer/user_cart.aspx" style="white-space:nowrap;">
+                            <span > <i class="fa fa-shopping-cart"></i> </span>
+                            <span id="cart_qty"  runat="server">0</span>
+                            <span style="display:none;">My Cart</span>
+                            <span id="cart_Price"  runat="server" style="display:none;">0.00</span> 
+                        </a>                        
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <div id="white-bar" style="margin:0px;height: 0px;"></div>    
+        <div  class="col-lg-12 col-md-12 col-sm-12 headerRow" > 
+         
+            <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server"> </asp:ContentPlaceHolder>
+            <asp:ContentPlaceHolder id="ContentPlaceHolder2" runat="server"> </asp:ContentPlaceHolder>
+        </div>
+        <uc1:footer runat="server" ID="footer" />
+    </form>
+    <!-- all js here -->
+		<!-- jquery latest version -->
+        <script src="/js/vendor/jquery-1.12.0.min.js"></script>
+		<!-- bootstrap js -->                
+        <script src="/js/bootstrap.min.js"></script>
+		<!-- owl.carousel js -->
+        <script src="/js/owl.carousel.min.js"></script>
+		<!-- meanmenu js -->
+        <script src="/js/jquery.meanmenu.js"></script>
+		<!-- wow js -->
+        <script src="/js/wow.min.js"></script>
+		<!-- jquery.parallax-1.1.3.js -->
+        <script src="/js/jquery.parallax-1.1.3.js"></script>
+		<!-- jquery.countdown.min.js -->
+        <script src="/js/jquery.countdown.min.js"></script>
+		<!-- jquery.flexslider.js -->
+        <script src="/js/jquery.flexslider.js"></script>
+		<!-- chosen.jquery.min.js -->
+        <script src="/js/chosen.jquery.min.js"></script>
+		<!-- jquery.counterup.min.js -->
+        <script src="/js/jquery.counterup.min.js"></script>
+		<!-- waypoints.min.js -->
+        <script src="/js/waypoints.min.js"></script>
+		<!-- plugins js -->
+        <script src="/js/plugins.js"></script>
+		<!-- main js -->
+        <script src="/js/main.js"></script>
+        <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.min.js" ></script>
+        <script src="/admin-assets/js/plugins/toastr/toastr.min.js"></script>		
+ 
+        <asp:PlaceHolder ID="ph_msg" runat="server"></asp:PlaceHolder>
+        <asp:Literal ID="ltr_master_scripts" runat="server"></asp:Literal>
+        <asp:ContentPlaceHolder ID="scripts" runat="server"></asp:ContentPlaceHolder>
+</body>
+</html>

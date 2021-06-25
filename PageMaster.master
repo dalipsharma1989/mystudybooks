@@ -1,0 +1,53 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="PageMaster.master.cs" Inherits="PageMaster" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/admin-assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/admin-assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/cosmo-bootstrap.min.css" />
+    <link href="/admin-assets/css/asp-style.css" rel="stylesheet" />
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+
+    <script>
+        function pageLoad(sender, args) {
+            if (args.get_isPartialLoad()) {
+                $(document).ready(function () {
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('[data-toggle="popover"]').popover();
+                });
+            }
+        }
+    </script>
+    <style>
+        .container{
+            max-width: 98%;
+            padding: 0;
+        }
+        body{
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="container">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+        </div>
+    </form>
+
+    <!-- Mainly scripts -->
+    <script src="/admin-assets/js/jquery-2.1.1.js"></script>
+    <script src="/admin-assets/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="scripts" runat="server"></asp:ContentPlaceHolder>
+</body>
+</html>

@@ -1,0 +1,306 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="OuterMaster.master.cs" Inherits="Customer_OuterMaster" %>
+<%@ Register Src="~/CustomControls/SearchBook.ascx" TagPrefix="uc1" TagName="SearchBook" %>
+<%@ Register Src="~/CustomControls/footer.ascx" TagPrefix="uc1" TagName="footer" %>
+<!DOCTYPE html>
+
+<html lang="en" style="overflow-x:hidden;">
+<head runat="server">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title><%=System.Configuration.ConfigurationManager.AppSettings["CompanyName"]%></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Favicon -->
+	<link rel="shortcut icon" type="image/x-icon" href="/img/favicon.jpg">
+     <link href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css" rel="Stylesheet" type="text/css" />
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/customecss/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/css.css" rel="stylesheet" />    
+    <link href="css/css.css" rel="stylesheet" />    
+    <link href="css/customecss/customcss.css" rel="stylesheet" />    
+    <!-- owl.carousel css -->
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link href="css/customecss/style.css" rel="stylesheet" />    
+    <link href="css/customecss/styleslogin.css" rel="stylesheet" />
+    <script src="js/vendor/jquery-1.12.0.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <link href="css/Ver_1.1/styleDcbooks.css" rel="stylesheet" />   
+    <link href="css/Ver_1.0/homeDCbooks.css" rel="stylesheet" />
+    <link href="css/customecss/homrPage.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () { 
+            $("#DropDownList1").attr("onmouseover", "this.size=this.length");
+            $("#DropDownList1").attr("onmouseout","this.size=1")
+
+            if ($(window).width() > 768) {
+                $('.navbar .dropdown').on('mouseover', function () {
+                    $('.dropdown-toggle', this).next('.dropdown-menu').show();
+                }).on('mouseout', function () {
+                    $('.dropdown-toggle', this).next('.dropdown-menu').hide();
+                });
+            }
+            else {
+                $('.navbar .dropdown').off('mouseover').off('mouseout');
+            }
+
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 50) {
+                    $('#back-to-top').fadeIn();
+                } else {
+                    $('#back-to-top').fadeOut();
+                }
+            });
+            // scroll body to 0px on click
+            $('#back-to-top').click(function () {
+                $('#back-to-top').tooltip('hide');
+                $('body,html').animate({
+                    scrollTop: 0
+                }, 800);
+                return false;
+            });
+
+            //$('#back-to-top').tooltip('show');
+        });
+        $(document).ready(function () {
+            $('#languageMobile').click(function () {
+                $('.dropdown-list').slideToggle(100);
+            });
+        });
+
+        $(document).ready(function () {
+            if ($(window).width() > 768) {
+                $('.dropdown').on('mouseover', function () {
+                    $('.dropdown-toggle', this).next('.dropdown-menu').show();
+                }).on('mouseout', function () {
+                    $('.dropdown-toggle', this).next('.dropdown-menu').hide();
+                });
+            }
+            else {
+                $('.navbar .dropdown').off('mouseover').off('mouseout');
+            }
+            
+        });
+    </script>    
+     <script>
+         function myFunction() {
+             var x = document.getElementById("myLinks");
+             if (x.style.display === "block") {
+                 x.style.display = "none";
+             } else {
+                 x.style.display = "block";
+             }
+         }
+     </script>
+     <script>
+         var coll = document.getElementsByClassName("collapsible");
+         var i;
+
+         for (i = 0; i < coll.length; i++) {
+             coll[i].addEventListener("click", function () {
+                 this.classList.toggle("active");
+                 var content = this.nextElementSibling;
+                 if (content.style.display === "block") {
+                     content.style.display = "none";
+                 } else {
+                     content.style.display = "block";
+                 }
+             });
+         }
+       
+     </script>
+      <script>
+          $(window).ready(function () {
+              $('body').scroll(function () {
+
+                  console.log("scroll");
+                  if ($(this).scrollTop() >= 50) {        // If page is scrolled more than 50px
+                      $('#return-to-top').fadeIn(200);    // Fade in the arrow
+                  } else {
+                      $('#return-to-top').fadeOut(200);   // Else fade out the arrow
+                  }
+              });
+              $('#return-to-top').click(function () {
+                  console.log("click");// When arrow is clicked
+                  $('body,html').animate({
+                      scrollTop: 0                       // Scroll to top of body
+                  }, 500);
+              });
+          })
+      </script>
+
+</head>
+
+
+<body id="page-browse-landingHome" class="home-2 home-3">
+      <a href="javascript:" id="return-to-top"><i class="fa fa-angle-up" aria-hidden="true"></i></a>
+    <form id="form1" runat="server" autocomplete="off">
+    <!-- Koparion Consists of many smaller forms, we had to find an alternative for the form id="form1" --> 
+        <asp:ScriptManager ID="ScriptManager1" runat="server" LoadScriptsBeforeUI="true"   EnablePageMethods="true"> </asp:ScriptManager>
+                <div class="topnav top-menu hidden-lg hidden-sm hidden-md">
+                      <%--<a  href="/"><i class="fa fa-fw fa-home"></i> Home</a> --%> <!--commented -->
+                  <ul id="section">
+                      <li>
+                    <a href="javascript:void(0);" class="icon" onclick="myFunction()" style="background:none;right: 12px;top: 18px;font-size: 23px;">
+                    <i style="color:black" class="fa fa-bars"></i>
+                    </a>
+                          </li>
+                      <li>
+                     <a style="padding-left:0px" href="/" >
+                            <img style="height: 75px;max-width:200px;" src="../img/logo.jpg" alt="<%=System.Configuration.ConfigurationManager.AppSettings["CompanyName"]%>">
+                     </a>
+                          </li>
+                  </ul>
+                  <div id="myLinks">
+                       <a  href="/" class="actives"><i class="fa fa-fw fa-home"></i> Home</a> 
+                         <asp:Repeater ID="rp_main_menu_mobile" runat="server">
+                            <ItemTemplate>                                 
+                                        <%# ((Eval("Name").ToString().ToLower() != "Languages") && (Eval("Name").ToString().ToLower() != "Languages")
+                                    ? "<li><a class='actives' href='../menu.aspx?menuid=" + Eval("MenuID") + "&type=" + Eval("Type") + "'>" + Eval("Name") + "</a></li>"
+                                    : "<li class='dropdown'>"+ "<a href='#' data-lightbox='Slider_listview' class='active dropdown-toggle'>Catalogue</a>" +
+                                            "<ul class='dropdown-menu'>" +
+                                                "<li><a href='#'>Download Catalogue</a></li>" +
+                                                "<li><a href='#'>Download Checklist Excel</a></li>" +
+                                            "</ul></li>")%> 
+                            </ItemTemplate>
+                        </asp:Repeater>
+                      <li class="dropdown"   style="display:none;">
+     <a href='#' data-lightbox='Slider_listview' class='active dropdown-toggle language-mobile collapsible' id="languageMobile"><i class="fa fa-language"></i> Title</a>
+                            <ul style='width:100%;background: transparent;' class='dropdown-menu login-dropdown content dropdown-list'>
+                                <asp:Repeater ID="rp_LoadLanguage_mobile" runat="server">
+                                    <ItemTemplate>                                 
+                                        <li>
+                                            <a class='actives' href='../search_results.aspx?langid="<%# Eval("LanguageID") %>"' title="<%# Eval("LanguageName") %>"><%# Eval("LanguageName") %></a>
+                                        </li> 
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </ul>
+   </li>
+           <ul  id="ulaccountmobile" runat="server" style="color:black" class="menu"></ul>
+                       <a href="user_cart.aspx" style="white-space:nowrap; display: none; z-index: 999;">
+                                <span> <i class="fa fa-shopping-cart"></i> </span>
+                                <span id="Span1"  runat="server">0</span>
+                                <span>My Cart</span>
+                                <span id="Span2"  runat="server" style="display:none;">0.00</span> 
+                            </a>
+  </div>
+
+</div>
+        <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+        <input autocomplete="off" name="hidden" type="text" style="display:none;">
+         <div class="header-wrapper">
+            <div class="row main-header">
+                  <div class="col-lg-3 col-md-3 col-xm-1 hidden-xs">
+                        <a href="/" >
+                            <%--<img src="../img/logo.jpeg" alt="<%=System.Configuration.ConfigurationManager.AppSettings["CompanyName"]%>">--%>
+                            <img style="max-width:200px;"  id="websitelogo" src="../img/logo.jpg" alt="<%=System.Configuration.ConfigurationManager.AppSettings["CompanyName"]%>">
+                        </a>                        
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-xm-10 col-xs-9  search">
+                        <uc1:SearchBook runat="server" ID="SearchBook" />                        
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-xm-3 col-xs-3 carts">                        
+                        <div class="cart-item-wrapper">                        
+                            <a href="user_cart.aspx" style="white-space:nowrap;">
+                                <span > <i class="fa fa-shopping-cart"></i> </span>
+                                <span id="cart_qty"  runat="server">0</span>
+                                <span>My Cart</span>
+                                <span id="cart_Price"  runat="server">0.00</span> 
+                            </a>                        
+                            </div>
+                    </div> 
+            </div>
+         </div>
+        <div id="white-bar"></div>
+        <div  class="col-lg-12 col-md-12 col-sm-12  headerRow hidden-xs">
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                    <ul class="menu">
+                        <li>
+                            <a  href="/" class="actives"><i class="fa fa-fw fa-home"></i> Home</a> 
+                        </li>                     
+                        <asp:Repeater ID="rp_main_menu" runat="server" Visible="false">
+                            <ItemTemplate>                                 
+                                    <%# ((Eval("Name").ToString().ToLower() != "oadLanguage") && (Eval("Name").ToString().ToLower() != "oadLanguage")
+                                    ? "<li><a class='actives' href='../menu.aspx?menuid=" + Eval("MenuID") + "&type=" + Eval("Type") + "'>" + Eval("Name") + "</a></li>"
+                                    : "<li class='dropdown'>"+ "<a href='#' data-lightbox='Slider_listview' class='active dropdown-toggle'>Catalogue</a>" +
+                                            "<ul class='dropdown-menu'>" +
+                                                "<li><a href='#'>Download Catalogue</a></li>" +
+                                                "<li><a href='#'>Download Checklist Excel</a></li>" +
+                                            "</ul></li>")%> 
+                            </ItemTemplate>
+                        </asp:Repeater>
+                        <li class="dropdown"   style="display:none;">
+                            <a href='#' data-lightbox='Slider_listview' class='active dropdown-toggle'>Title</a>
+                            <ul class='dropdown-menu'>
+                                <asp:Repeater ID="rp_LoadLanguage" runat="server">
+                                    <ItemTemplate>                                 
+                                        <li>
+                                            <a class='actives' href='../search_results.aspx?langid="<%# Eval("LanguageID") %>"&langnm="<%# Eval("LanguageName") %>"' title="<%# Eval("LanguageName") %>"><%# Eval("LanguageName") %></a>
+                                        </li> 
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </ul> 
+                        </li>
+                        <li id="ul_account" runat="server" ></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12" style="display:none;">
+                    <ul class="menu"> 
+                        <li>
+                            <a  class="actives" href="http://school.mystudybooks.in/" target="_blank" style="font-size: 20px;font-weight: 900;border: 1px solid #f59744;box-shadow: 5px 5px 10px 5px grey;">School BookStore</a>
+                        </li>
+                    </ul> 
+                </div> 
+            </div> 
+
+        <div class="main col-md-12" style="padding: 1%;">
+            
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+        </div>
+        <uc1:footer runat="server" ID="footer" />
+    </form>
+    
+    <asp:Literal ID="ltr_master_scripts" runat="server"></asp:Literal>
+    <asp:ContentPlaceHolder ID="scripts" runat="server">
+    </asp:ContentPlaceHolder>
+    
+		<!-- all js here -->
+		<!-- jquery latest version -->
+        <script src="/js/vendor/jquery-1.12.0.min.js"></script>
+		<!-- bootstrap js -->
+        <script src="/js/bootstrap.min.js"></script>
+		<!-- owl.carousel js -->
+        <script src="/js/owl.carousel.min.js"></script>
+		<!-- meanmenu js -->
+        <script src="/js/jquery.meanmenu.js"></script>
+		<!-- wow js -->
+        <script src="/js/wow.min.js"></script>
+		<!-- jquery.parallax-1.1.3.js -->
+        <script src="/js/jquery.parallax-1.1.3.js"></script>
+		<!-- jquery.countdown.min.js -->
+        <script src="/js/jquery.countdown.min.js"></script>
+		<!-- jquery.flexslider.js -->
+        <script src="/js/jquery.flexslider.js"></script>
+		<!-- chosen.jquery.min.js -->
+        <script src="/js/chosen.jquery.min.js"></script>
+		<!-- jquery.counterup.min.js -->
+        <script src="/js/jquery.counterup.min.js"></script>
+		<!-- waypoints.min.js -->
+        <script src="/js/waypoints.min.js"></script>
+		<!-- plugins js -->
+        <script src="js/plugins.js"></script>
+		<!-- main js -->
+        <script src="js/main.js"></script>
+
+        <script src="/js/jquery-ui.min.js" ></script>		
+    		
+        <script src="/admin-assets/js/plugins/toastr/toastr.min.js"></script>		
+
+
+</body>
+</html>
+
+
+

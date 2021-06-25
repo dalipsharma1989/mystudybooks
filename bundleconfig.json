@@ -1,0 +1,264 @@
+[
+  {
+    "outputFileName": "css/customecss/user-cart.min.css",
+    "inputFiles": [
+      "css/customecss/user-cart.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/styleslogin.min.css",
+    "inputFiles": [
+      "css/customecss/styleslogin.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/styleDcbooks.min.css",
+    "inputFiles": [
+      "css/customecss/styleDcbooks.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/style.min.css",
+    "inputFiles": [
+      "css/customecss/style.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/homrPage.min.css",
+    "inputFiles": [
+      "css/customecss/homrPage.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/homeDCbooks.min.css",
+    "inputFiles": [
+      "css/customecss/homeDCbooks.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/dc-login-styles.min.css",
+    "inputFiles": [
+      "css/customecss/dc-login-styles.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/customcss.min.css",
+    "inputFiles": [
+      "css/customecss/customcss.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/css-cookie.min.css",
+    "inputFiles": [
+      "css/customecss/css-cookie.css"
+    ]
+  },
+  {
+    "outputFileName": "Customer/js/bundle.js",
+    "inputFiles": [
+      "Customer/js/ajax-mail.js",
+      "Customer/js/jquery.flexslider.js",
+      "Customer/js/jquery.meanmenu.js",
+      "Customer/js/jquery.parallax-1.1.3.js",
+      "Customer/js/main.js",
+      "Customer/js/plugins.js"
+    ]
+  },
+  {
+    "outputFileName": "css/animate.min.css",
+    "inputFiles": [
+      "css/animate.css"
+    ]
+  },
+  {
+    "outputFileName": "css/aos.min.css",
+    "inputFiles": [
+      "css/aos.css"
+    ]
+  },
+  {
+    "outputFileName": "css/css.min.css",
+    "inputFiles": [
+      "css/css.css"
+    ]
+  },
+  {
+    "outputFileName": "css/flexslider.min.css",
+    "inputFiles": [
+      "css/flexslider.css"
+    ]
+  },
+  {
+    "outputFileName": "css/font-awesome.min.min.css",
+    "inputFiles": [
+      "css/font-awesome.min.css"
+    ]
+  },
+  {
+    "outputFileName": "css/owl.carousel.min.css",
+    "inputFiles": [
+      "css/owl.carousel.css"
+    ]
+  },
+  {
+    "outputFileName": "css/responsive.min.css",
+    "inputFiles": [
+      "css/responsive.css"
+    ]
+  },
+  {
+    "outputFileName": "js/bundle.js",
+    "inputFiles": [
+      "js/wow.min.js",
+      "js/ajax-mail.js",
+      "js/aos.js",
+      "js/bootstrap.min.js",
+      "js/chosen.jquery.min.js",
+      "js/jquery-2.1.4.min.js",
+      "js/jquery-ui.min.js",
+      "js/jquery.countdown.min.js",
+      "js/jquery.counterup.min.js",
+      "js/jquery.flexslider.js",
+      "js/jquery.meanmenu.js",
+      "js/jquery.min.js",
+      "js/jquery.parallax-1.1.3.js",
+      "js/main.js",
+      "js/owl.carousel.min.js",
+      "js/plugins.js",
+      "js/waypoints.min.js"
+    ]
+  },
+  {
+    "outputFileName": "js/vendor/vendorbundle.js",
+    "inputFiles": [
+      "js/vendor/jquery-1.12.0.min.js",
+      "js/vendor/modernizr-2.8.3.min.js"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/bootstrap.min.min.css",
+    "inputFiles": [
+      "css/customecss/bootstrap.min.css"
+    ]
+  },
+  {
+    "outputFileName": "css/bootstrap.min.min.css",
+    "inputFiles": [
+      "css/bootstrap.min.css"
+    ]
+  },
+  {
+    "outputFileName": "css/customecss/jquery-ui.min.css",
+    "inputFiles": [
+      "css/customecss/jquery-ui.css"
+    ]
+  },
+  {
+    "outputFileName": "admin-assets/css/plugins/toastr/toastr.min.min.css",
+    "inputFiles": [
+      "admin-assets/css/plugins/toastr/toastr.min.css"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.1/IndexJsFIle.min.js",
+    "inputFiles": [
+      "js/1.0.1/IndexJsFIle.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.1/MasterJS.min.js",
+    "inputFiles": [
+      "js/1.0.1/MasterJS.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.1/SearchingJs.min.js",
+    "inputFiles": [
+      "js/1.0.1/SearchingJs.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.2/IndexJsFIle.min.js",
+    "inputFiles": [
+      "js/1.0.2/IndexJsFIle.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.2/SearchingJs.min.js",
+    "inputFiles": [
+      "js/1.0.2/SearchingJs.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.3/IndexJsFIle.min.js",
+    "inputFiles": [
+      "js/1.0.3/IndexJsFIle.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.3/MasterJS.min.js",
+    "inputFiles": [
+      "js/1.0.3/MasterJS.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.3/moreitems.min.js",
+    "inputFiles": [
+      "js/1.0.3/moreitems.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.3/SearchingJs.min.js",
+    "inputFiles": [
+      "js/1.0.3/SearchingJs.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.5/IndexJsFIle.min.js",
+    "inputFiles": [
+      "js/1.0.5/IndexJsFIle.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.5/MasterJS.min.js",
+    "inputFiles": [
+      "js/1.0.5/MasterJS.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.5/moreitems.min.js",
+    "inputFiles": [
+      "js/1.0.5/moreitems.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.5/SearchingJs.min.js",
+    "inputFiles": [
+      "js/1.0.5/SearchingJs.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.6/IndexJsFIle.min.js",
+    "inputFiles": [
+      "js/1.0.6/IndexJsFIle.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.6/MasterJS.min.js",
+    "inputFiles": [
+      "js/1.0.6/MasterJS.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.6/moreitems.min.js",
+    "inputFiles": [
+      "js/1.0.6/moreitems.js"
+    ]
+  },
+  {
+    "outputFileName": "js/1.0.6/SearchingJs.min.js",
+    "inputFiles": [
+      "js/1.0.6/SearchingJs.js"
+    ]
+  }
+]

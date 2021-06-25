@@ -1,0 +1,1579 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using Telerik.Web.UI;
+using System.Web.Services;
+using System.Configuration;
+using System.Text;
+// Made a class which can store the detail of one book.
+public class ModalBookData
+{
+    public string Name { get; set; }
+    public string Currency { get; set; }
+    public string Price { get; set; }
+    public string Details { get; set; }
+    public string ImagePath { get; set; }
+    public string Availability { get; set; }
+    public string AddToCart { get; set; }
+}
+
+public partial class _Default : System.Web.UI.Page
+{
+
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        
+
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        //int x = (Request.Browser.ScreenCharactersWidth); 
+        //Response.Write("<script>alert(" + x + ");</script>");
+
+        RadListView2.Visible = false;
+        RadDataPager2.Visible = false;
+        RadDataPager2.Enabled = false;
+        RadListView2.Enabled = false;
+        this.Title = CommonCode.SetPageTitle("Search you Books");
+
+        ltr_scripts.Text = "";
+        //string height = HttpContext.Current.Request.Params["clientScreenHeight"];
+        //string width = HttpContext.Current.Request.Params["clientScreenWidth"];
+        //if (Defwidth.Value != "" && Defwidth.Value != null)
+        //{
+        //    if (Int64.Parse(Defwidth.Value) >= 768 && Int64.Parse(Defwidth.Value) <= 1024)
+        //    {
+        //        RadListView1.GroupItemCount = 3;
+        //    }
+        //}
+
+        if (!IsPostBack)
+        {
+            string search_string = "", option_name = "",Category="",Language="";
+            if (!string.IsNullOrEmpty(Request.QueryString["q"]))
+            {
+                option_name = "Search All";
+                search_string = Request.QueryString["q"];
+            }
+            if (!string.IsNullOrEmpty(Request.QueryString["author"]))
+            {
+                option_name = "Author";
+                search_string = Request.QueryString["author"];
+            }
+            if (!string.IsNullOrEmpty(Request.QueryString["Cat"]))
+            {
+                option_name = "Categories";
+                Category = Request.QueryString["Cat"];
+            }
+            if (!string.IsNullOrEmpty(Request.QueryString["langid"]))
+            {
+                option_name = "Language";
+                Language = Request.QueryString["langid"];
+            }
+            if (!string.IsNullOrEmpty(Request.QueryString["publisher"]))
+            {
+                option_name = "Publisher";
+                search_string = Request.QueryString["publisher"];
+            }
+            cmpOption.SelectedIndex = cmpOption.Items.IndexOf(cmpOption.Items.FindByText(option_name));
+            txtSearch.Text = search_string;
+         //   bindSubjects();
+
+            if (string.IsNullOrEmpty(Request.QueryString["subjectid"]))
+            {
+             //   LoadBooks();
+            }
+            load_BookLanguage();
+            load_BookCategories();
+            load_BookPublisher();
+            load_BookAuthor();
+            
+            // ********************* Updated : 29 / 06 / 2019 ********************* //
+            // ********************* Added wishlist feature *********************** //
+
+            if (Session["CustID"] != null)
+            {
+                if (Session["CustID"].ToString() == "guest")
+                {
+                    wishlist_side.Visible = false;
+                    wishlist_msg.Visible = true;
+                    wishlist_msg.InnerText = "Please login to access Wishltist";
+                }
+                else
+                {
+                    load_wishlist_products();
+                }
+            }
+        }
+    }
+
+    private void load_BookCategories()
+    {
+        SqlCommand com = new SqlCommand("web_GetBookCategory", CommonCode.con);
+        com.Parameters.Add("@iCompanyID", SqlDbType.Int).Value = Session["iCompanyID"] + "";
+        com.Parameters.Add("@iBranchID", SqlDbType.Int).Value = Session["iBranchID"] + "";
+        com.CommandType = CommandType.StoredProcedure;
+        DataTable dt = new DataTable();
+        string errmsg;
+        dt = CommonCode.getData(com, out errmsg);
+        if (errmsg == "success")
+        {
+            if (dt.Rows.Count > 0)
+            {
+                rlb_category.DataTextField = "BookCategoryDesc";
+                rlb_category.DataValueField = "BookCategoryID";
+                rlb_category.DataSource = dt;
+                rlb_category.DataBind();
+            }
+        }
+        else
+        {
+            //  CommonCode.show_toastr("error", "Error", errmsg, false, "", false, "", ltr_scripts);
+        }
+    }
+    private void load_BookPublisher()
+    {
+        SqlCommand com = new SqlCommand("web_GetPublishers", CommonCode.con);
+        com.Parameters.Add("@iCompanyID", SqlDbType.Int).Value = Session["iCompanyID"] + "";
+        com.Parameters.Add("@iBranchID", SqlDbType.Int).Value = Session["iBranchID"] + "";
+        com.CommandType = CommandType.StoredProcedure;
+        DataTable dt = new DataTable();
+        string errmsg;
+        dt = CommonCode.getData(com, out errmsg);
+        if (errmsg == "success")
+        {
+            if (dt.Rows.Count > 0)
+            {
+                rlb_Publisher.DataTextField = "PublisherName";
+                rlb_Publisher.DataValueField = "PublisherID"; 
+                rlb_Publisher.DataSource = dt;
+                rlb_Publisher.DataBind();
+            }
+        }
+        else
+        {
+            //  CommonCode.show_toastr("error", "Error", errmsg, false, "", false, "", ltr_scripts);
+        }
+    }
+    private void load_BookAuthor()
+    {
+        SqlCommand com = new SqlCommand("web_GetAuthors", CommonCode.con);
+        com.Parameters.Add("@iCompanyID", SqlDbType.Int).Value = Session["iCompanyID"] + "";
+        com.Parameters.Add("@iBranchID", SqlDbType.Int).Value = Session["iBranchID"] + "";
+        com.CommandType = CommandType.StoredProcedure;
+        DataTable dt = new DataTable();
+        string errmsg;
+        dt = CommonCode.getData(com, out errmsg);
+        if (errmsg == "success")
+        {
+            if (dt.Rows.Count > 0)
+            {
+                rlb_Author.DataTextField = "AuthorName";
+                rlb_Author.DataValueField = "AuthorID";
+                rlb_Author.DataSource = dt;
+                rlb_Author.DataBind();
+            }
+        }
+        else
+        {
+            //  CommonCode.show_toastr("error", "Error", errmsg, false, "", false, "", ltr_scripts);
+        }
+    }
+
+    public void load_wishlist_products()
+    {
+
+        SqlCommand com = new SqlCommand("Web_Get_Wishlist", CommonCode.con);
+        com.CommandType = CommandType.StoredProcedure;
+        com.Parameters.Add("@CustID", SqlDbType.VarChar, 30).Value = Session["CustID"].ToString();
+        com.Parameters.Add("@iCompanyId", SqlDbType.Int).Value = Session["iCompanyID"].ToString();
+        com.Parameters.Add("@iBranchId", SqlDbType.Int).Value = Session["iBranchID"].ToString();
+        DataTable dt = new DataTable();
+        string errmsg;
+        dt = CommonCode.getData(com, out errmsg);
+
+        wishlist_head.InnerText = Session["CustName"]+"'s Wishlist";
+
+        DAL dal = new DAL();
+        dt = dal.get_ImagesfromAPI(dt);
+
+        if (dt.Rows.Count > 0)
+        {
+
+            wishlist_side.DataSource = dt;
+            wishlist_side.DataBind();
+            wishlist_side.Visible = true;
+            wishlist_msg.Visible = false;
+        }
+        else
+        {
+            wishlist_side.Visible = false;
+            wishlist_msg.InnerText = "Your Wishlist is Empty";
+            wishlist_msg.Visible = true;
+        }
+    }
+    
+    private void bindSubjects(string SubjectID = "")
+    {
+        string errmsg = "";
+        DAL dal = new DAL();
+        DataTable dt = new DataTable();
+        dt = dal.get_Subjectsubject(SubjectID, Session["iCompanyID"].ToString(), out errmsg);
+        if (errmsg == "success")
+        {
+            if (dt.Rows.Count > 0)
+            {
+                rb_subjects.DataTextField = "SubjectName";
+                rb_subjects.DataValueField = "SubjectID";
+                rb_subjects.DataSource = dt;
+                rb_subjects.DataBind();
+            }
+            else
+                CommonCode.show_alert("warning", "No Subject found", "", ph_msg);
+        }
+        else
+            CommonCode.show_alert("danger", "Error while loading Subjects!", errmsg, ph_msg);
+    }
+
+    protected void ddListSort_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        RadioButtonList rbl = RadListView1.FindControl("rblSort") as RadioButtonList;
+        RadComboBox cmbrbl = RadListView1.FindControl("ddListSort") as RadComboBox;
+        LinkButton tb = RadListView1.FindControl("RBLToggler") as LinkButton;
+        switch (e.Value)
+        {
+            case "ISBN":
+                LoadBooks();
+                RadListView1.Items[0].FireCommandEvent(RadListView.SortCommandName, "ISBN");
+                rbl.SelectedIndex = 0;
+                break;
+            case "BookName":
+                LoadBooks();
+                RadListView1.Items[0].FireCommandEvent(RadListView.SortCommandName, "BookName");
+                rbl.SelectedIndex = 0;
+                break;
+            case "Author":
+                LoadBooks();
+                RadListView1.Items[0].FireCommandEvent(RadListView.SortCommandName, "Author");
+                rbl.SelectedIndex = 0;
+                break;
+            case "SalePrice":
+                LoadBooks();
+                RadListView1.Items[0].FireCommandEvent(RadListView.SortCommandName, "SalePrice");
+                rbl.SelectedIndex = 0;
+                break;
+            case "Discount":
+                LoadBooks();
+                RadListView1.Items[0].FireCommandEvent(RadListView.SortCommandName, "DiscountPercent");
+                rbl.SelectedIndex = 0;
+                break;
+            case "ClearSort":
+                Response.Redirect("search_results.aspx", false);
+                break;
+            default:
+                RadListView1.SortExpressions.Clear();
+                RadListView1.Rebind();
+                break;
+        }
+        tb.Text = Server.HtmlDecode("<i class='fa fa-arrow-up'></i>");
+    }
+
+    protected void ddListSort_SelectedIndexChanged2(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        LinkButton tb = RadListView2.FindControl("RBLToggler2") as LinkButton;
+        RadioButtonList rbl2 = RadListView2.FindControl("rblSort2") as RadioButtonList;
+        RadComboBox cmbrbl2 = sender as RadComboBox;
+        switch (e.Value)
+        {
+            case "ISBN":
+                LoadBooks();
+                RadListView2.Items[0].FireCommandEvent(RadListView.SortCommandName, "ISBN");
+                rbl2.SelectedIndex = 0;
+                break;
+            case "BookName":
+                LoadBooks();
+                RadListView2.Items[0].FireCommandEvent(RadListView.SortCommandName, "BookName");
+                rbl2.SelectedIndex = 0;
+                break;
+            case "Author":
+                LoadBooks();
+                RadListView2.Items[0].FireCommandEvent(RadListView.SortCommandName, "Author");
+                rbl2.SelectedIndex = 0;
+                break;
+            case "SalePrice":
+                LoadBooks();
+                RadListView2.Items[0].FireCommandEvent(RadListView.SortCommandName, "SalePrice");
+                rbl2.SelectedIndex = 0;
+                break;
+            case "Discount":
+                LoadBooks();
+                RadListView2.Items[0].FireCommandEvent(RadListView.SortCommandName, "DiscountPercent");
+                rbl2.SelectedIndex = 0;
+                break;
+            default:
+                RadListView2.SortExpressions.Clear();
+                RadListView2.Rebind();
+                break;
+        }
+        tb.Text = Server.HtmlDecode("<i class='fa fa-arrow-up'></i>");
+        RadListView2.Visible = true;
+        RadListView2.Enabled = true;
+    }
+
+    protected void list_selected(object sender, EventArgs e)
+    {
+        RadListView1.Visible = false;
+        RadListView1.Enabled = false;
+        RadListView2.Visible = true;
+        RadListView2.Enabled = true;
+        RadDataPager2.Visible = true;
+        RadDataPager2.Enabled = true;
+        RadDataPager1.Visible = false;
+        RadDataPager1.Enabled = false;
+        LoadBooks();
+    }
+
+    protected void grid_selected(object sender, EventArgs e)
+    {
+        RadListView2.Visible = false;
+        RadListView2.Enabled = false;
+        RadListView1.Visible = true;
+        RadListView1.Enabled = true;
+        RadDataPager1.Visible = true;
+        RadDataPager1.Enabled = true;
+        RadDataPager2.Visible = false;
+        RadDataPager2.Enabled = false;
+        LoadBooks();
+    }
+
+    protected void toggleRBL(object sender, EventArgs e)
+    {
+        RadioButtonList rblSort = RadListView1.FindControl("rblSort") as RadioButtonList;
+        LinkButton tb = sender as LinkButton;
+        switch (rblSort.SelectedValue)
+        {
+            case "ASC":
+                rblSort.SelectedValue = "DESC";
+                tb.Text = Server.HtmlDecode("<i class='fa fa-arrow-down'></i>");
+                rblSort_SelectedIndexChanged(rblSort, e);
+                break;
+            case "DESC":
+                rblSort.SelectedValue = "ASC";
+                tb.Text = Server.HtmlDecode("<i class='fa fa-arrow-up'></i>");
+                rblSort_SelectedIndexChanged(rblSort, e);
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void rblSort_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        RadioButtonList rbl = sender as RadioButtonList;
+        RadComboBox combo = RadListView1.FindControl("ddListSort") as RadComboBox;
+
+        if (combo.SelectedItem.Value.ToString() != String.Empty && combo.SelectedItem.Value.ToString() != "ClearSort")
+        {
+            switch (rbl.SelectedValue)
+            {
+                case "ASC":
+                    RadListView1.Items[0].FireCommandEvent(RadListView.SortCommandName, combo.SelectedValue + " ASC");
+                    LoadBooks();
+                    break;
+                case "DESC":
+                    RadListView1.Items[0].FireCommandEvent(RadListView.SortCommandName, combo.SelectedItem.Value + " DESC");
+                    LoadBooks();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    protected void toggleRBL2(object sender, EventArgs e)
+    {
+        RadioButtonList rblSort = RadListView2.FindControl("rblSort2") as RadioButtonList;
+        LinkButton tb = sender as LinkButton;
+        switch (rblSort.SelectedValue)
+        {
+            case "ASC":
+                rblSort.SelectedValue = "DESC";
+                tb.Text = Server.HtmlDecode("<i class='fa fa-arrow-down'></i>");
+                rblSort_SelectedIndexChanged2(rblSort, e);
+                break;
+            case "DESC":
+                rblSort.SelectedValue = "ASC";
+                tb.Text = Server.HtmlDecode("<i class='fa fa-arrow-up'></i>");
+                rblSort_SelectedIndexChanged2(rblSort, e);
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void rblSort_SelectedIndexChanged2(object sender, EventArgs e)
+    {
+        RadioButtonList rbl = sender as RadioButtonList;
+        RadComboBox combo = RadListView2.FindControl("ddListSort2") as RadComboBox;
+
+        if (combo.SelectedItem.Value.ToString() != String.Empty && combo.SelectedItem.Value.ToString() != "ClearSort")
+        {
+            switch (rbl.SelectedValue)
+            {
+                case "ASC":
+                    RadListView2.Items[0].FireCommandEvent(RadListView.SortCommandName, combo.SelectedValue + " ASC");
+                    LoadBooks();
+                    break;
+                case "DESC":
+                    RadListView2.Items[0].FireCommandEvent(RadListView.SortCommandName, combo.SelectedValue + " DESC");
+                    LoadBooks();
+                    break;
+                default:
+                    break;
+            }
+            RadListView2.Visible = true;
+            RadListView2.Enabled = true;
+        }
+    }
+
+    
+
+     
+    protected void LoadBooks(string filterType = "", string filterTxt = "", string Category = "", string langid = "") 
+    {
+        //string height = HttpContext.Current.Request.Params["clientScreenHeight"];
+        //string width = HttpContext.Current.Request.Params["clientScreenWidth"];
+        //if (Defwidth.Value != "" && Defwidth.Value != null)
+        //{
+        //    if (Int64.Parse(Defwidth.Value) >= 768 && Int64.Parse(Defwidth.Value) <= 1024)
+        //    {
+        //        RadListView1.GroupItemCount = 3;
+        //    }
+        //}
+
+        //        string Searchname = Request.Form[txtSearch.UniqueID];
+        string Searchname = txtSearch.Text;
+        if (Searchname != null)
+        {
+            Searchname = Searchname.Replace("[", "[[]");
+        }
+        else
+        {
+            Searchname = txtSearch.Text.Replace("[", "[[]");
+        }
+        string SearchID = Request.Form[hftextSearchBooks.UniqueID]; 
+        string websearchtype = "", websearchText = ""; 
+        if (cmpOption.Text.Trim().ToUpper() == "NONE" & string.IsNullOrEmpty(filterType.Trim()) & string.IsNullOrEmpty(filterTxt.Trim()))
+        {
+            // Do Nothing
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(filterType.Trim()))
+            {
+                filterType = cmpOption.Text.Trim().ToUpper();
+            }
+
+            if (!string.IsNullOrEmpty(filterTxt.Trim()))
+            {
+                filterTxt = Searchname.Replace("'", "");
+            }
+
+            if (filterType.Trim() == "ALL")
+            {
+                if (!string.IsNullOrEmpty(Searchname))
+                {
+                    websearchtype = filterType.Trim();
+                    websearchText = filterTxt;
+                }
+            }
+
+            if (filterType.Trim() == "SUBJECT")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "AUTHOR")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "PUBLISHER")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "BOOKNAME")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "ISBN")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+        }
+        string Searchsubjectlist = "", SearchsubjectlistID = "";
+
+        string list_subjects = rb_subjects.SelectedValue;
+        if (!string.IsNullOrEmpty(list_subjects.Trim()))
+        {
+            Searchsubjectlist = "SUBJECTLIST";
+            SearchsubjectlistID = list_subjects;
+        }
+        string rbPublisherID = "", rbAuthorID = "", ddlLanguageID = "",rbCategoryID = "", CatNAme = "", AutName = "", PubLisherName = "";
+
+        if (!string.IsNullOrEmpty(ddl_Language.SelectedValue.Trim()))
+        {
+            if (ddl_Language.SelectedValue == "Nil")
+            {
+                ddlLanguageID = "";
+            }
+            else
+            {
+                ddlLanguageID = ddl_Language.SelectedValue.Trim();
+
+            }
+        }
+
+        if (!string.IsNullOrEmpty(Request.QueryString["langid"]) && ddl_Language.SelectedValue == "Nil")
+        {
+            ddlLanguageID = Request.QueryString["langid"].ToString().Replace("\"", "");
+            ddl_Language.SelectedValue = ddlLanguageID;
+        }  
+
+        foreach (RadListBoxItem lst in rlb_Author.Items)
+        {
+            if (lst.Checked == true)
+            {
+                //if (!string.IsNullOrEmpty(rbAuthorID.Trim()))
+                //{
+                //    rbAuthorID = rbAuthorID + ",";
+                //    rbAuthorID = rbAuthorID + lst.Value;
+                //    AutName = AutName + ",";
+                //    AutName = AutName + lst.Value;
+                //}
+                if (!string.IsNullOrEmpty(rbAuthorID.Trim()))
+                {
+                    rbAuthorID = rbAuthorID + ",";
+                    AutName = AutName + ", ";
+                    rbAuthorID = rbAuthorID + lst.Value;
+                    AutName = AutName + lst.Text.Trim();
+                }
+                else
+                {
+                    rbAuthorID = rbAuthorID + lst.Value;
+                    AutName = AutName + lst.Text.Trim();
+                }
+
+                
+
+            }
+        }
+
+        //if (!string.IsNullOrEmpty(Request.QueryString["author"]) && Request.QueryString["author"].ToString() != "Nil")
+        //{
+        //    if (!string.IsNullOrEmpty(rbAuthorID.Trim()))
+        //        rbAuthorID = rbAuthorID + ",";
+        //    rbAuthorID = rbAuthorID + Request.QueryString["author"];
+        //}
+
+        foreach (RadListBoxItem lst in rlb_Publisher.Items)
+        {
+            if (lst.Checked == true)
+            {
+                if (!string.IsNullOrEmpty(rbPublisherID.Trim()))
+                {
+                    PubLisherName = PubLisherName + ",";
+                    rbPublisherID = rbPublisherID + ", ";
+                    rbPublisherID = rbPublisherID + lst.Value;
+                    PubLisherName = PubLisherName + lst.Text.Trim();
+                }
+                else
+                {
+                    rbPublisherID = rbPublisherID + lst.Value;
+                    PubLisherName = PubLisherName + lst.Text.Trim();
+                } 
+            }
+        }
+
+        //if (!string.IsNullOrEmpty(Request.QueryString["publisher"]) && Request.QueryString["publisher"].ToString() != "Nil")
+        //{
+        //    if (!string.IsNullOrEmpty(rbPublisherID.Trim()))
+        //        rbPublisherID = rbPublisherID + ",";
+        //    rbPublisherID = rbPublisherID + Request.QueryString["publisher"];
+        //}
+
+        foreach (RadListBoxItem lst in rlb_category.Items)
+        {
+            if (lst.Checked == true)
+            {
+                if (!string.IsNullOrEmpty(rbCategoryID.Trim()))
+                {
+                    rbCategoryID = rbCategoryID + ",";
+                    CatNAme = CatNAme + ", ";
+                    rbCategoryID = rbCategoryID + lst.Value;
+                    CatNAme = CatNAme + lst.Text.Trim();
+                }
+                else
+                {
+                    rbCategoryID = rbCategoryID + lst.Value;
+                    CatNAme = CatNAme + lst.Text.Trim();
+                } 
+            }
+        }
+
+        //if (!string.IsNullOrEmpty(Request.QueryString["Cat"]) && Request.QueryString["Cat"].ToString() != "Nil")
+        //{
+        //    if (!string.IsNullOrEmpty(rbCategoryID.Trim()))
+        //        rbCategoryID = rbCategoryID + ",";
+        //    rbCategoryID = rbCategoryID + Request.QueryString["Cat"];
+        //} 
+
+        if (!string.IsNullOrEmpty(Request.QueryString["q"]) )
+        {
+            websearchText = Request.QueryString["q"].ToString();
+        }
+
+        string errmsg = "";
+        DataTable dt = new DataTable();
+        DAL dal = new DAL();
+        dt = dal.get_searchdatabyUsers(websearchtype, websearchText, Searchsubjectlist, SearchsubjectlistID, Session["OtherCountry"].ToString(), Session["iCompanyId"].ToString(), Session["iBranchID"].ToString(),rbPublisherID,rbAuthorID, ddlLanguageID, rbCategoryID, out errmsg);
+
+        if (errmsg == "success")
+        {
+            if (dt.Rows.Count > 0)
+            {
+                dv_pager.Visible = true;
+                DAL dal1 = new DAL();
+                dt = dal1.get_ImagesfromAPI(dt); 
+                RadListView1.DataSource = dt;
+                RadListView1.DataBind();
+                //RadListView2.DataSource = dt;
+                //RadListView2.DataBind();
+
+                String strMsg = "You Are Looking for ";
+
+                if (!string.IsNullOrEmpty(ddl_Language.SelectedItem.Text.Trim()) && ddl_Language.SelectedValue != "Nil")
+                {
+                    strMsg += " Language - " + ddl_Language.SelectedItem.Text.Trim();
+                }
+                if (!string.IsNullOrEmpty(Request.QueryString["langid"]) && ddl_Language.SelectedValue == "Nil")
+                {
+                    strMsg += " Language - " + Request.QueryString["langnm"].ToString().Replace("\"", "");
+                }
+                if (!string.IsNullOrEmpty(CatNAme.Trim()))
+                {
+                    strMsg += " Category - " + CatNAme.Trim();
+                }
+                if (!string.IsNullOrEmpty(AutName.Trim()))
+                {
+                    strMsg += " Author - " + AutName.Trim();
+                }
+                if (!string.IsNullOrEmpty(PubLisherName.Trim()))
+                {
+                    strMsg += " Publisher - " + PubLisherName.Trim();
+                }
+                if (!string.IsNullOrEmpty(Request.QueryString["q"]))
+                {
+                    strMsg += " and Text - " + Request.QueryString["q"].ToString();
+                }
+                if (strMsg == "You Are Looking for ")
+                {
+                    strMsg = "";
+                }
+                //CommonCode.show_alert("success", dt.Rows.Count + " item(s) found", strMsg , ph_msg);
+                showMsgs.InnerText = dt.Rows.Count + " item(s) found " + strMsg;
+            }
+            else
+            {
+                dv_pager.Visible = false;
+                RadListView1.DataSource = null;
+                RadListView1.DataBind();
+                //RadListView2.DataSource = null;
+                //RadListView2.DataBind();
+
+                String strMsg = "You Are Looking for ";
+
+                if (!string.IsNullOrEmpty(ddl_Language.SelectedItem.Text.Trim()) && ddl_Language.SelectedValue != "Nil")
+                {
+                    strMsg += " Language - " + ddl_Language.SelectedItem.Text.Trim();
+                }
+                if (!string.IsNullOrEmpty(Request.QueryString["langid"]) && ddl_Language.SelectedValue == "Nil")
+                {
+                    strMsg += " Language - " + Request.QueryString["langnm"].ToString().Replace("\"", "");
+                }
+                if (!string.IsNullOrEmpty(CatNAme.Trim()))
+                {
+                    strMsg += " Category - " + CatNAme.Trim();
+                }
+                if (!string.IsNullOrEmpty(AutName.Trim()))
+                {
+                    strMsg += " Author - " + AutName.Trim();
+                }
+                if (!string.IsNullOrEmpty(PubLisherName.Trim()))
+                {
+                    strMsg += " Publisher - " + PubLisherName.Trim();
+                }
+                if (!string.IsNullOrEmpty(Request.QueryString["q"]))
+                {
+                    strMsg += " and Text - " + Request.QueryString["q"].ToString();
+                }
+                if (strMsg == "You Are Looking for ")
+                {
+                    strMsg = "";
+                }
+                showMsgs.InnerText = "No Data found, Try other keywords or make new search by clearing all filters!, " + strMsg;
+                //CommonCode.show_alert("warning", "No Data found", "Try other keywords or make new search by clearing all filters. ", ph_msg);
+            }
+        }
+        else
+        {
+            CommonCode.show_alert("danger", "Error while loading data!", errmsg, ph_msg);
+        }
+    }
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rp_bind_books_ItemCommand(object source, RepeaterCommandEventArgs e)
+    {
+        String ProductID = e.CommandArgument.ToString();
+        if (e.CommandName == "addtocart")
+        {
+            add_item_to_cart(ProductID);
+        }
+        else if (e.CommandName == "addtowishlist")
+        {
+            string wishlist_msg = "";
+            if (Session["CustID"] != null)
+            {
+                wishlist_msg = CommonCode.AddToWishlist(Session["CustID"] + "", ProductID, Session["iCompanyId"].ToString(), Session["iBranchID"].ToString() );
+            }
+            else
+            {
+                wishlist_msg = CommonCode.AddToWishlist("guest", ProductID, Session["iCompanyId"].ToString(), Session["iBranchID"].ToString());
+            }
+
+            if (wishlist_msg == "success")
+            {
+                CommonCode.show_toastr("success", "Wishlist", "Product added to Wishlist !", true, "closeButton: true,progressBar: true,showMethod: 'slideDown',timeOut:4000", true, "window.location.replace('Customer/wishlist.aspx');", ltr_scripts);
+            }
+            else if (wishlist_msg == "Product is already in your wishlist !")
+            {
+                CommonCode.show_toastr("info", "Wishlist", "Product is already in your wishlist !", true, "closeButton: true,progressBar: true,showMethod: 'slideDown',timeOut:4000", true, "window.location.replace('Customer/wishlist.aspx');", ltr_scripts);
+            }
+            else
+            {
+                CommonCode.show_toastr("error", "Wishlist", wishlist_msg, false, "", false, "", ltr_scripts);
+            }
+        } 
+    }
+
+    private void add_item_to_cart(String ProductID)
+    {
+        String errmsg = "success";
+        String CustID = "";
+        if (Session["CustID"] != null)
+        {
+            CustID = Session["CustID"].ToString();
+        }
+        String CartID = "";
+        errmsg = CommonCode.AddToCart(CustID, ProductID, Session["iCompanyId"].ToString(), Session["iBranchID"].ToString(), out CartID);
+        if (errmsg == "success")
+        {
+            CommonCode.show_toastr("success", "Cart", "Successfuly added to cart !", true, "closeButton: true,progressBar: true,showMethod: 'slideDown',timeOut:5000",
+                                        true, "window.location.replace('Customer/user_cart.aspx');", ltrMsg);
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.Page.GetType(), "alert", "alert('Successfuly added to cart !');", true);
+            if (!string.IsNullOrEmpty(CartID))
+                Session["CartID"] = CartID;
+        }
+        else
+        {
+            CommonCode.show_toastr("error", "Cart Error !", errmsg.Replace('\'', ' '), true, "closeButton: true,progressBar: true,showMethod: 'slideDown',timeOut:4000",
+                                        true, "window.location.replace('Customer/user_cart.aspx');", ltrMsg);
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.Page.GetType(), "alert", "alert('"+ errmsg.Replace('\'', ' ') + "');", true);
+        } 
+    }
+
+    protected void lstView_NeedDataSource(object source, Telerik.Web.UI.RadListViewNeedDataSourceEventArgs e)
+    {
+        RadListView1.DataSource = rtnDataBooks("", "");
+        //RadListView2.DataSource = rtnDataBooks("", "");
+    }
+
+    private void load_BookLanguage()
+    {
+        SqlCommand com = new SqlCommand("web_GetMasterLanguage", CommonCode.con);
+        com.Parameters.Add("@iCompanyID", SqlDbType.Int).Value = Session["iCompanyID"] + "";
+        com.Parameters.Add("@iBranchID", SqlDbType.Int).Value = Session["iBranchID"] + "";
+        com.CommandType = CommandType.StoredProcedure;
+        DataTable dt = new DataTable();
+        string errmsg;
+        dt = CommonCode.getData(com, out errmsg);
+        if (errmsg == "success")
+        {
+            if (dt.Rows.Count > 0)
+            {
+                ddl_Language.Items.Add(new ListItem("All Titles", "Nil"));
+                foreach (DataRow rr in dt.Rows)
+                {
+                    ddl_Language.Items.Add(new ListItem(rr[1].ToString(), rr[0].ToString()));
+                } 
+            }
+        }
+        else
+        {
+            //CommonCode.show_alert("error", "Error", errmsg, ,false, "", false, "", ph_msg);
+        }
+    }
+
+    protected DataTable rtnDataBooks(string filterType = "", string filterTxt = "")
+    {
+
+        //string height = HttpContext.Current.Request.Params["clientScreenHeight"];
+        //string width = HttpContext.Current.Request.Params["clientScreenWidth"];
+        //if (Defwidth.Value != "" && Defwidth.Value != null)
+        //{
+        //    if (Int64.Parse(Defwidth.Value) >= 768 && Int64.Parse(Defwidth.Value) <= 1024)
+        //    {
+        //        RadListView1.GroupItemCount = 3;
+        //    }
+        //}
+
+        //string Searchname = Request.Form[txtSearch.UniqueID];
+        //string SearchId = Request.Form[hftextSearchBooks.UniqueID];
+        string Searchname = txtSearch.Text;
+        string SearchId = Request.Form[hftextSearchBooks.UniqueID];
+        string  websearchtype = "", websearchText = ""; 
+        if (cmpOption.Text.Trim().ToUpper() == "NONE" & string.IsNullOrEmpty(filterType.Trim()) & string.IsNullOrEmpty(filterTxt.Trim()))
+        {
+            // Do Nothing
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(filterType.Trim()))
+            {
+                filterType = cmpOption.Text.Trim().ToUpper();
+            }
+
+            if (!string.IsNullOrEmpty(Searchname))
+            {
+                filterTxt = Searchname.Replace("'", "");
+            }
+
+            if (filterType.Trim() == "ALL")
+            {
+                if (!string.IsNullOrEmpty(Searchname))
+                {
+                    websearchtype = filterType.Trim();
+                    websearchText = filterTxt;
+                }
+            }
+
+            if (filterType.Trim() == "SUBJECT")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "AUTHOR")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "PUBLISHER")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "BOOKNAME")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+            else if (filterType.Trim() == "ISBN")
+            {
+                websearchtype = filterType.Trim();
+                websearchText = filterTxt;
+            }
+        }
+        string Searchsubjectlist = "", SearchsubjectlistID = "";
+
+        string list_subjects = rb_subjects.SelectedValue;
+        if (!string.IsNullOrEmpty(list_subjects.Trim()))
+        {
+            Searchsubjectlist = "SUBJECTLIST";
+            SearchsubjectlistID = list_subjects;
+        }
+
+        string rbPublisherID = "", rbAuthorID = "", ddlLanguageID = "", rbCategoryID = "",CatNAme="", AutName = "", PubLisherName = "";
+         
+        if (!string.IsNullOrEmpty(ddl_Language.SelectedValue.Trim()))
+        {
+            if (ddl_Language.SelectedValue == "Nil")
+            {
+                ddlLanguageID = "";
+            }
+            else
+            {
+                ddlLanguageID = ddl_Language.SelectedValue.Trim();
+            }
+        } 
+
+        if (!string.IsNullOrEmpty(Request.QueryString["langid"]) && ddl_Language.SelectedValue == "Nil")
+        {
+            ddlLanguageID = Request.QueryString["langid"].ToString().Replace("\"","");
+            ddl_Language.SelectedValue = ddlLanguageID;
+        }
+
+        foreach (RadListBoxItem lst in rlb_Author.Items)
+        {
+            if (lst.Checked == true)
+            {
+                if (!string.IsNullOrEmpty(rbPublisherID.Trim()))
+                {
+                    rbAuthorID = rbAuthorID + ",";
+                    AutName = AutName + ", ";
+                    rbAuthorID = rbAuthorID + lst.Value; 
+                    AutName = AutName + lst.Text.Trim();
+                }
+                else
+                {
+                    rbAuthorID = rbAuthorID + lst.Value;
+                    AutName = AutName + lst.Text.Trim();
+                } 
+                
+            }
+        }
+         
+
+        foreach (RadListBoxItem lst in rlb_Publisher.Items)
+        {
+            if (lst.Checked == true)
+            {
+                if (!string.IsNullOrEmpty(rbPublisherID.Trim()))
+                {
+                    rbPublisherID = rbPublisherID + ",";
+                    PubLisherName = PubLisherName + ", ";
+                    rbPublisherID = rbPublisherID + lst.Value;
+                    PubLisherName = PubLisherName + lst.Text.Trim();
+                }
+                else
+                {
+                    rbPublisherID = rbPublisherID + lst.Value;
+                    PubLisherName = PubLisherName + lst.Text.Trim();
+                }
+                
+            }
+        } 
+        foreach (RadListBoxItem lst in rlb_category.Items)
+        {
+            if (lst.Checked == true)
+            {
+                if (!string.IsNullOrEmpty(rbCategoryID.Trim()))
+                {
+                    rbCategoryID = rbCategoryID + ",";
+                    CatNAme = CatNAme + ", ";
+                    rbCategoryID = rbCategoryID + lst.Value;
+                    CatNAme = CatNAme + lst.Text.Trim();
+                }
+                else
+                {
+                    rbCategoryID = rbCategoryID + lst.Value;
+                    CatNAme = CatNAme + lst.Text.Trim();
+                }
+            }
+        }
+         
+        if (!string.IsNullOrEmpty(Request.QueryString["q"]))
+        {
+            websearchText = Request.QueryString["q"].ToString();
+        }
+
+
+        string errmsg = "";
+        DataTable dt = new DataTable();
+        
+        DAL dal = new DAL();
+        dt = dal.get_searchdatabyUsers(websearchtype, websearchText, Searchsubjectlist, SearchsubjectlistID, Session["OtherCountry"].ToString(), Session["iCompanyId"].ToString(), Session["iBranchID"].ToString(), rbPublisherID, rbAuthorID, ddlLanguageID, rbCategoryID, out errmsg);
+        DAL dal2 = new DAL();
+        if (dt != null)
+        {
+            dt = dal2.get_ImagesfromAPI(dt);
+
+            String strMsg = "You Are Looking for ";
+
+            
+            if (!string.IsNullOrEmpty(ddl_Language.SelectedItem.Text.Trim()) && ddl_Language.SelectedValue != "Nil")
+            {
+                strMsg += " Language - " + ddl_Language.SelectedItem.Text.Trim();
+            }
+
+            if (!string.IsNullOrEmpty(Request.QueryString["langid"]) && ddl_Language.SelectedValue == "Nil")
+            {
+                strMsg += " Language - " + Request.QueryString["langnm"].ToString().Replace("\"", "");
+            }
+
+            if (!string.IsNullOrEmpty(CatNAme.Trim()))
+            {
+                strMsg += " Category - " + CatNAme.Trim();
+            }
+            if (!string.IsNullOrEmpty(AutName.Trim()))
+            {
+                strMsg += " Author - " + AutName.Trim();
+            }
+            if (!string.IsNullOrEmpty(PubLisherName.Trim()))
+            {
+                strMsg += " Publisher - " + PubLisherName.Trim();
+            }
+            if (!string.IsNullOrEmpty(Request.QueryString["q"]))
+            {
+                strMsg += " Text - " + Request.QueryString["q"].ToString();
+            }
+            if (strMsg == "You Are Looking for ")
+            {
+                strMsg = "";
+            }
+            showMsgs.InnerText =  dt.Rows.Count + " item(s) found " + strMsg;
+            //CommonCode.show_alert("success", dt.Rows.Count + " item(s) found", strMsg, ph_msg);
+        }        
+        return dt;
+    }
+
+    [WebMethod]
+    public static string[] GetDataList(string prefix, string cmpOption, string rb_SubjectID, string cmbcategory)
+    {
+        string filterType = ""; string filterTxt = "", CategoryID = "";
+        List<string> Products = new List<string>();
+ 
+        if (cmpOption.ToUpper() == "NONE" & string.IsNullOrEmpty(filterType.Trim()) & string.IsNullOrEmpty(filterTxt.Trim()))
+        {           }
+        else
+        {
+            if (string.IsNullOrEmpty(filterType.Trim()))
+            {
+                if (cmbcategory.ToUpper() == "NIL")
+                {
+                    filterType = "ALL"; 
+                }
+                else
+                {
+                    filterType = cmpOption.ToUpper(); 
+                }
+            }
+
+            if (string.IsNullOrEmpty(filterTxt.Trim()))
+            {
+                filterTxt = prefix;
+            } 
+        }
+
+        if (prefix != null)
+        {
+            prefix = prefix.Replace("-", "[-]");
+        }
+
+        DAL dal = new DAL();
+        String errmsg = "";
+        DataTable dt = new DataTable();
+
+        dt = dal.get_custom_searchdatabyUsers(filterType.Trim(),prefix, HttpContext.Current.Session["OtherCountry"].ToString(), HttpContext.Current.Session["iCompanyId"].ToString(), HttpContext.Current.Session["iBranchID"].ToString(), cmbcategory.Trim(), out errmsg);
+
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            foreach(DataRow dr in dt.Rows)
+            {
+                Products.Add(string.Format("{0}|{1}", dr["BookCode"].ToString() , dr["BookName"].ToString()));
+            }
+            
+        }
+             
+        return Products.ToArray();
+    }
+
+    protected void txtsearchItem_Click(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void txtSearch_TextChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rb_subjects_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rb_subjects_DataBound(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(Request.QueryString["subjectid"]))
+        {
+            rb_subjects.SelectedIndex = rb_subjects.Items.IndexOf(rb_subjects.Items.FindByValue(Request.QueryString["subjectid"]));
+            LoadBooks();
+        }
+    }
+    
+    protected void rb_categories_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rb_categories_DataBound(object sender, EventArgs e)
+    {    }
+
+    protected void rb_classes_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rb_classes_DataBound(object sender, EventArgs e)
+    { }
+
+    // ******************* Updated : 04/07/2019 *******************//
+    // ******************* Gets data for Modal *******************//
+    //[System.Web.Services.WebMethod]
+    //[System.Web.Script.Services.ScriptMethod(ResponseFormat = System.Web.Script.Services.ResponseFormat.Json)]
+    //public static ModalBookData GetData(string ProductID)
+    //{
+    //    ModalBookData mdb = new ModalBookData();
+    //    string errmsg = "";
+    //    DAL dal = new DAL();
+    //    //DataSet ds = dal.get_curr_book_details( ProductID, out errmsg);
+    //    DataSet ds = new DataSet();
+    //    if (HttpContext.Current.Session["OtherCountry"] != null && HttpContext.Current.Session["OtherCountry"].ToString() == "OtherCountry")
+    //        ds = dal.get_curr_book_details("OtherCountry", ProductID, out errmsg);
+    //    else
+    //        ds = dal.get_curr_book_details("", ProductID, out errmsg);
+
+    //    if (errmsg == "success")
+    //    {
+    //        DataTable product_details = ds.Tables[0];
+    //        DataTable customer_reviews = ds.Tables[1];
+    //        DataTable shipping_message = ds.Tables[2];
+    //        product_details = dal.get_ImagesfromAPI(product_details);
+    //        customer_reviews = dal.get_ImagesfromAPI(customer_reviews);
+
+    //        if (product_details.Rows.Count > 0)
+    //        {
+    //            DataRow dr = product_details.Rows[0];
+    //            mdb.Name = dr["BookName"].ToString();
+    //            mdb.Currency = dr["SaleCurrency"].ToString();
+    //            if (String.IsNullOrEmpty(dr["DiscountPrice"].ToString()))
+    //            {
+    //                mdb.Price = "<span>" + dr["SaleCurrency"].ToString() + " " + dr["SalePrice"].ToString() + "</span>";
+    //            }
+    //            else
+    //            {
+    //                mdb.Price = "<strike style='color: black; font-weight:200; font-size: large;'>" +
+    //                                dr["SaleCurrency"].ToString() + " " + dr["SalePrice"].ToString() +
+    //                                "</strike><br/>" +
+    //                                "<span>" + dr["SaleCurrency"].ToString() + " " + dr["DiscountPrice"].ToString() + "</span>";
+    //            }
+    //            if (dr["ClosingBalStatus"].ToString() == "Out of Stock")
+    //                mdb.Availability = "Out of Stock";
+    //            else
+    //                mdb.Availability = "In Stock";
+    //            mdb.ImagePath = product_details.Rows[0]["ImagePath"] + ""; // "/resources/product/" + dr["ISBN"].ToString() + ".png";
+    //            mdb.Details = "<div class='product-info-table'>"
+    //                                    + "<table class='table product-table' style='border-bottom: 1px solid #ddd;'>"
+    //                                        + "<tr>"
+    //                                            + "<th>"
+    //                                                + "ISBN"
+    //                                            + "</th>"
+    //                                            + "<td>"
+    //                                                + dr["ISBN"].ToString()
+    //                                            + "</td>"
+    //                                        + "</tr>"
+    //                                        + (string.IsNullOrEmpty(dr["Author"].ToString()) ? "" : "<tr><th>Author</th><td>" + dr["Author"].ToString() + "</td></tr>")
+    //                                        + (string.IsNullOrEmpty(dr["Publisher"].ToString()) ? "" : "<tr><th>Publisher</th><td>" + dr["Publisher"].ToString() + "</td></tr>")
+    //                                        + (string.IsNullOrEmpty(dr["edition"].ToString()) ? "" : "<tr><th>Edition</th><td>" + dr["edition"].ToString() + "</td></tr>")
+    //                                        + (string.IsNullOrEmpty(dr["volume"].ToString()) ? "" : "<tr><th>Volume</th><td>" + dr["volume"].ToString() + "</td></tr>")
+    //                                        + (string.IsNullOrEmpty(dr["PublishYear"].ToString()) ? "" : "<tr><th>Publish Year</th><td>" + dr["PublishYear"].ToString() + "</td></tr>")
+    //                                    //+ (string.IsNullOrEmpty(dr["AboutProduct"].ToString()) ? "" : "<tr><td colspan='2'><div style='max-height: 25vw; overflow: auto;'>" + dr["AboutProduct"].ToString() + "</div></td></tr>")
+    //                                    + "</table>"
+    //                                + "</div>";
+    //        }
+    //        else
+    //        {
+    //            mdb.Name = "-1";
+    //        }
+    //    }
+    //    else
+    //    {
+    //        mdb.Name = "-1";
+    //        mdb.Details = errmsg;
+    //    }
+    //    return mdb;
+    //}
+    //// ******************* Updated : 29/06/2019 *******************//
+    //// *************** Added Wishlist on Left pane  ***************//
+
+    [System.Web.Services.WebMethod]
+    [System.Web.Script.Services.ScriptMethod(ResponseFormat = System.Web.Script.Services.ResponseFormat.Json)]
+    public static ModalBookData GetData(string ProductID)
+    {
+        ModalBookData mdb = new ModalBookData();
+        string errmsg = "";
+        DAL dal = new DAL();
+        //DataSet ds = dal.get_curr_book_details( ProductID, out errmsg);
+        DataSet ds = new DataSet();
+        if (HttpContext.Current.Session["OtherCountry"] != null && HttpContext.Current.Session["OtherCountry"].ToString() == "OtherCountry")
+            ds = dal.get_curr_book_details("OtherCountry", ProductID, HttpContext.Current.Session["iCompanyID"].ToString(), HttpContext.Current.Session["iBranchID"].ToString(), out errmsg);
+        else
+            ds = dal.get_curr_book_details("", ProductID, HttpContext.Current.Session["iCompanyID"].ToString(), HttpContext.Current.Session["iBranchID"].ToString(), out errmsg);
+
+
+        if (errmsg == "success")
+        {
+            DataTable product_details = ds.Tables[0];
+            DataTable customer_reviews = ds.Tables[1];
+            DataTable shipping_message = ds.Tables[2];
+            if (product_details.Rows.Count > 0)
+            {
+
+                product_details = dal.get_ImagesfromAPI(product_details);
+
+                customer_reviews = dal.get_ImagesfromAPI(customer_reviews);
+
+                DataRow dr = product_details.Rows[0];
+                mdb.Name = dr["BookName"].ToString();
+                mdb.Currency = dr["SaleCurrency"].ToString();
+
+                if (String.IsNullOrEmpty(dr["DiscountPrice"].ToString()))
+                {
+                    mdb.Price = "<span>" + dr["SaleCurrency"].ToString() + " " + dr["SalePrice"].ToString() + "</span>";
+                }
+                else
+                {
+                    mdb.Price = "<strike style='color: black; font-weight:200; font-size: large;'>" + dr["SaleCurrency"].ToString() + " " + dr["SalePrice"].ToString() +
+                                    "</strike><br/>" + "<span>" + dr["SaleCurrency"].ToString() + " " + dr["DiscountPrice"].ToString() + "</span>";
+                }
+                if (dr["ClosingBalStatus"].ToString() == "Out of Stock")
+                {
+                    mdb.Availability = "<i  style='color:red;'> Out of Stock </i>";
+                    mdb.AddToCart = "<a href='index.aspx?productid=" + ProductID.ToString() + "' id='ANC_AddtoCart' title='Out of Stock' class='qty btn btn-primary disabled' style='line-height:35px !important;background-color: #000000;border-color:#000000;' ><i style='font-weight:800;width:100%;' class='fa fa-shopping-cart'> Add To Cart</i></a>";
+                }
+                else
+                {
+                    mdb.Availability = "<i  class='fa fa-check'></i>In Stock";
+                    //mdb.AddToCart = "<a href='index.aspx?productid="+ProductID.ToString()+ "' id='ANC_AddtoCart' Title='Add To Cart' class='qty' style='line-height:35px !important;' ><i style='font-weight:800;width:100%;' class='fa fa-shopping-cart'> Add To Cart</i></a>";
+                    mdb.AddToCart = "<a href='index.aspx?productid=" + ProductID.ToString() + "' id='ANC_AddtoCart' Title='Add To Cart' class='qty btn btn-primary' style='line-height:35px !important;' ><i style='font-weight:800;width:100%;' class='fa fa-shopping-cart'> Add To Cart</i></a>";
+                }
+
+                mdb.ImagePath = product_details.Rows[0]["ImagePath"] + ""; // "/resources/product/" + dr["ISBN"].ToString() + ".png";
+                mdb.Details = "<div class='product-info-table'>" +
+                                "<table class='table product-table' style='border-bottom: 1px solid #ddd;'>" +
+                                "<tr>" + "<th>" + "ISBN" + "</th>" + "<td>" + dr["ISBN"].ToString() + "</td>" + "</tr>"
+                                + (string.IsNullOrEmpty(dr["BookName"].ToString()) ? "" : "<tr><th>Book Name</th><td>" + dr["BookName"].ToString() + "</td></tr>")
+                                + (string.IsNullOrEmpty(dr["Author"].ToString()) ? "" : "<tr><th>Author</th><td>" + dr["Author"].ToString() + "</td></tr>")
+                                + (string.IsNullOrEmpty(dr["Publisher"].ToString()) ? "" : "<tr><th>Publisher</th><td>" + dr["Publisher"].ToString() + "</td></tr>")
+                                + (string.IsNullOrEmpty(dr["edition"].ToString()) ? "" : "<tr><th>Edition</th><td>" + dr["edition"].ToString() + "</td></tr>")
+                                + (string.IsNullOrEmpty(dr["volume"].ToString()) ? "" : "<tr><th>Volume</th><td>" + dr["volume"].ToString() + "</td></tr>")
+                                + (string.IsNullOrEmpty(dr["PublishYear"].ToString()) ? "" : "<tr><th>Publish Year</th><td>" + dr["PublishYear"].ToString() + "</td></tr>")
+                                + (string.IsNullOrEmpty(dr["Binding"].ToString()) ? "" : "<tr><th>Binding</th><td>" + dr["Binding"].ToString() + "</td></tr>")   //+ (string.IsNullOrEmpty(dr["AboutProduct"].ToString()) ? "" : "<tr><td colspan='2'><div style='max-height: 25vw; overflow: auto;'>" + dr["AboutProduct"].ToString() + "</div></td></tr>")
+                                + "</table>" + "</div>";
+            }
+            else
+            {
+                mdb.Name = "-1";
+            }
+        }
+        else
+        {
+            mdb.Name = "-1";
+            mdb.Details = errmsg;
+        }
+        return mdb;
+    }
+    public void delete_wishlist(String ProductID)
+    {
+        String errmsg = "success";
+
+        if (ProductID == "")
+        {
+            SqlCommand com = new SqlCommand("dbo_delete_item_from_Wishlist", CommonCode.con);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Parameters.Add("@CustID", SqlDbType.BigInt).Value = Session["CustID"].ToString();
+            com.Parameters.Add("@ProductID", SqlDbType.BigInt).Value = 0;
+            errmsg = CommonCode.ExecuteNoQuery(com, CommonCode.con);
+            if (errmsg == "success")
+            {
+                load_wishlist_products();
+                ltr_scripts.Text = "<script> $(function(){ toastr.success('Items Removed from Wishlist ! ', 'Item Removed');});</script>";
+            }
+            else
+            {
+                ltr_scripts.Text = "<script> $(function(){ toastr.error('" + errmsg.Replace('\'', ' ') + "', 'Wishlist Error !');});</script>";
+            }
+        }
+        else
+        {
+            SqlCommand com = new SqlCommand("dbo_delete_item_from_Wishlist", CommonCode.con);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Parameters.Add("@CustID", SqlDbType.BigInt).Value = Session["CustID"].ToString();
+            com.Parameters.Add("@ProductID", SqlDbType.BigInt).Value = ProductID;
+            errmsg = CommonCode.ExecuteNoQuery(com, CommonCode.con);
+            if (errmsg == "success")
+            {
+                load_wishlist_products();
+                ltr_scripts.Text = "<script> $(function(){ toastr.success('Item Removed from Wishlist ! ', 'Item Removed');});</script>";
+            }
+            else
+            {
+                ltr_scripts.Text = "<script> $(function(){ toastr.error('" + errmsg.Replace('\'', ' ') + "', 'Wishlist Error !');});</script>";
+            }
+        }
+
+
+    }
+
+    protected void rp_wishlist_ItemCommand(object source, RepeaterCommandEventArgs e)
+    {
+        String ProductID = e.CommandArgument.ToString();
+        if (e.CommandName == "add")
+        {
+            add_item_to_cart(ProductID);
+            if (Session["CustID"] == null || Session["CustID"].ToString() == "guest")
+            {
+                Response.Redirect("/Customer/user_login.aspx?returnto=" + HttpUtility.UrlEncode(Request.RawUrl), true);
+            }
+            else
+            {
+                add_item_to_cart(ProductID);
+                load_wishlist_products();
+            }
+            Master.load_Header();
+        }
+        else if (e.CommandName == "remove")
+        {
+            if (Session["CustID"] == null || Session["CustID"].ToString() == "guest")
+            {
+                Response.Redirect("/Customer/user_login.aspx?returnto=" + HttpUtility.UrlEncode(Request.RawUrl), true);
+            }
+            else
+            {
+                delete_wishlist(ProductID);
+                load_wishlist_products();
+            }
+        }
+    }
+
+    // ******************* Updated : 02/07/2019 *******************//
+    // ****** Added Add to Cart on List Views on Left pane  *******//
+
+    protected void RAD_List_View1_command(object sender, RadListViewCommandEventArgs e)
+    {
+        string commandName = e.CommandName;
+        string commandArgument = e.CommandArgument.ToString();
+        if(commandName == "AddToCart")
+        {
+            add_item_to_cart(commandArgument);
+        }
+        else if (e.CommandName == "addtowishlist")
+        {
+            string wishlist_msg = "";
+
+            if (Session["CustID"] != null && Session["CustID"].ToString() != "guest")
+            {
+                wishlist_msg = CommonCode.AddToWishlist(Session["CustID"] + "", commandArgument, Session["iCompanyId"].ToString(), Session["iBranchID"].ToString());
+            }
+            else
+            {
+                Response.Redirect("/Customer/user_login.aspx", true);
+            }
+            //if (Session["CustID"] != null)
+            //{
+                
+            //}
+            //else
+            //{
+            //    wishlist_msg = CommonCode.AddToWishlist("guest", commandArgument, Session["iCompanyId"].ToString(), Session["iBranchID"].ToString());
+            //}
+
+            if (wishlist_msg == "success")
+            {
+                ScriptManager.RegisterClientScriptBlock(this.Page, this.Page.GetType(), "alert", "alert('Item added to Wishlist !');", true);
+                //CommonCode.show_toastr("success", "Wishlist", "Product added to Wishlist !", true, "closeButton: true,progressBar: true,showMethod: 'slideDown',timeOut:4000", true, "window.location.replace('Customer/wishlist.aspx');", ltr_scripts);
+            }
+            else if (wishlist_msg == "Product is already in your wishlist !")
+            {
+                ScriptManager.RegisterClientScriptBlock(this.Page, this.Page.GetType(), "alert", "alert('Item is already in your wishlist !');", true);
+                //CommonCode.show_toastr("info", "Wishlist", "Product is already in your wishlist !", true, "closeButton: true,progressBar: true,showMethod: 'slideDown',timeOut:4000", true, "window.location.replace('Customer/wishlist.aspx');", ltr_scripts);
+            }
+            else
+            {
+                CommonCode.show_toastr("error", "Wishlist", wishlist_msg, false, "", false, "", ltr_scripts);
+            }
+        }
+
+        ((MasterPage)this.Page.Master).load_Header();        
+        //this.updSerchGrid.Update();
+    }
+
+    protected void rbAuthor_DataBound(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void rbAuthor_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rbPubLisher_DataBound(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void rbPubLisher_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rp_LoadCategories_DataBound(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void rp_LoadCategories_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void ddl_Language_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LoadBooks();
+    }
+     
+    [System.Web.Services.WebMethod]
+    [System.Web.Script.Services.ScriptMethod(ResponseFormat = System.Web.Script.Services.ResponseFormat.Json)]
+    public static CartData AddDataintoCart(string ProductID)
+    {
+        CartData mdbs = new CartData();
+
+        String errmsg = "success";
+        String CustID = "";
+        if (HttpContext.Current.Session["CustID"] != null)
+        {
+            CustID = HttpContext.Current.Session["CustID"].ToString();
+        }
+        String CartID = "";
+        errmsg = CommonCode.AddToCart(CustID, ProductID, HttpContext.Current.Session["iCompanyId"].ToString(), HttpContext.Current.Session["iBranchID"].ToString(), out CartID);
+        if (!string.IsNullOrEmpty(CartID))
+        {
+            HttpContext.Current.Session["CartID"] = CartID;
+        }
+
+        double cartQty = 0;
+        string errmsgs = "";
+        if (HttpContext.Current.Session["CustID"] != null)
+        {
+            if (HttpContext.Current.Session["CustID"].ToString() == "guest")
+            {
+                DataTable dt_tmp_cart;
+                dt_tmp_cart = (DataTable)HttpContext.Current.Session["tmpcart"];
+                foreach (DataRow dr in dt_tmp_cart.Rows)
+                {
+                    cartQty += Convert.ToDouble(dr[1].ToString());
+                }
+            }
+            else
+            {
+                DAL dal = new DAL();
+                DataSet ds = new DataSet();
+                ds = dal.get_user_and_cart("INDIA", HttpContext.Current.Session["CustID"].ToString(), HttpContext.Current.Session["iCompanyId"].ToString(), HttpContext.Current.Session["iBranchID"].ToString(), out errmsgs);
+                if (errmsg == "success")
+                {
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        DataTable tmp_cart = (DataTable)(ds.Tables[1]);
+                        if (tmp_cart.Rows.Count > 0)
+                        {
+                            foreach (DataRow book in (tmp_cart.AsEnumerable()))
+                            {
+                                try
+                                {
+                                    cartQty += Convert.ToDouble(book["Qty"].ToString());
+                                }
+                                catch
+                                { }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        StringBuilder strScript = new StringBuilder();
+        string htmls = CommonCode.show_toastr_forAjax("success", "Cart", "Successfuly added to cart !", true, "closeButton: true,progressBar: true,showMethod: 'slideDown',timeOut:4000", true, "window.location.replace('Customer/user_cart.aspx');", "");
+
+        strScript.Append(@htmls);
+        mdbs.ltrnmsg = htmls;
+        mdbs.litmsg = strScript.ToString();
+        mdbs.CartItems = cartQty.ToString();
+        mdbs.Result = errmsg;
+        return mdbs;
+    }
+
+
+
+    protected void rlb_category_ItemDataBound(object sender, RadListBoxItemEventArgs e)
+    {
+        foreach (RadListBoxItem item in rlb_category.Items)
+        {
+            if (!string.IsNullOrEmpty(Request.QueryString["Cat"]))
+            {
+                if (item.Value == Request.QueryString["Cat"])
+                {
+                    item.Checked = true;
+                }
+            }
+        }
+    }
+
+    protected void rlb_category_ItemCheck(object sender, RadListBoxItemEventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rlb_Publisher_ItemDataBound(object sender, RadListBoxItemEventArgs e)
+    {
+
+    }
+
+    protected void rlb_Publisher_ItemCheck(object sender, RadListBoxItemEventArgs e)
+    {
+        LoadBooks();
+    }
+
+    protected void rlb_Author_ItemDataBound(object sender, RadListBoxItemEventArgs e)
+    {
+
+    }
+
+    protected void rlb_Author_ItemCheck(object sender, RadListBoxItemEventArgs e)
+    {
+        LoadBooks();
+    }
+}
+
+public class CartData
+{
+    public string Result { get; set; }
+    public string CartItems { get; set; }
+    public string ltrnmsg { get; set; }
+    public string litmsg { get; set; }
+}

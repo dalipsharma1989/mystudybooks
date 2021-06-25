@@ -1,0 +1,258 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="AdminMaster.master.cs" Inherits="AdminMaster" %>
+
+<!DOCTYPE html>
+<html>
+<head runat="server"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="httpS://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css" rel="Stylesheet" type="text/css" />
+     <!-- Mainly scripts -->        
+    <script src="/admin-assets/js/jquery-2.1.1.js"></script>
+        <script src="httpS://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/jquery-ui.min.js" type="text/javascript"></script>        
+    <script src="/admin-assets/js/bootstrap.min.js"></script>
+
+    <script src="/admin-assets/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/admin-assets/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="/admin-assets/js/inspinia.js"></script>
+    <%--<script src="/admin-assets/js/plugins/pace/pace.min.js"></script>--%>
+    
+    <!-- Toastr script -->
+    <script src="/admin-assets/js/plugins/toastr/toastr.min.js"></script>
+    <script src="/admin-assets/lightbox/js/lightbox.min.js"></script>
+    
+    <title>STS | Admin</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+    <link href="/admin-assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin-assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="/admin-assets/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+
+    <link href="/admin-assets/css/animate.css" rel="stylesheet">
+    <link href="/admin-assets/css/style.css" rel="stylesheet">
+    <link href="/admin-assets/css/asp-style.css" rel="stylesheet" />
+    <%--<link href="/css/custom-radio-checkbox.css" rel="stylesheet" />--%>
+    <link rel="stylesheet" href="/admin-assets/lightbox/css/lightbox.css" />
+</head>
+
+<body class="">
+    <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" LoadScriptsBeforeUI="true"   EnablePageMethods="true"></asp:ScriptManager>
+        <div id="wrapper">
+            <nav class="navbar-default navbar-static-side" role="navigation">
+                <div class="sidebar-collapse">
+                    <ul class="nav metismenu" id="side-menu">
+                        <li class="nav-header">
+                            <div class="dropdown profile-element">
+                                <span>
+                                    <img alt="STS" class="img-circle" src="/admin-assets/img/profile_small.png" />
+                                </span>
+                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                    <span class="clear"><span class="block m-t-xs"><strong class="font-bold">Spring Time Software</strong>
+                                    </span><span class="text-muted text-xs block">Admin <b class="caret"></b></span></span></a>
+                                <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                    <li style="display:none"><a href="#">Profile</a></li>
+                                    <li  style="display:none" class="divider"></li>
+                                    <li>
+                                        <asp:LinkButton ID="lbl_logout2"
+                                            OnClick="lbl_logout_Click" CausesValidation="false"
+                                            runat="server">Logout</asp:LinkButton>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="logo-element">
+                                STS
+                            </div>
+                        </li>
+                        <li>
+                            <a href="adminhome.aspx"><i class="fa fa-th-large"></i><span class="nav-label">Dashboard</span></a>
+                        </li>
+                        <li style="display:none;">
+                            <a href="#"><i class="fa fa-table"></i><span class="nav-label">Import Documents</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="UploadDocuments.aspx">Import Checklists</a></li>
+                              <%--  <li><a href="import_excel.aspx?type=students">Students</a></li>
+                                <li><a href="import_excel.aspx?type=books">Books</a></li>
+                                <li><a href="import_excel.aspx?type=book_relation">Books Relations</a></li>--%>
+                            </ul>
+                        </li>
+
+                        <%--<li id="li_user" class="active">--%>
+                            <li id="li_user" >
+                                <a href="#"><i class="fa fa-table"></i><span class="nav-label">Users</span>
+                                    <span class="fa arrow"></span>
+                                </a>
+                            <ul id="ul_user" class="nav nav-second-level collapse">
+                                <li id="li_schools" style="display:none;">
+                                    <a href="#">Schools <span class="fa arrow"></span></a>
+                                    <ul id="ul_schools" class="nav nav-third-level collapse">
+                                        <li id="li_apporved_schools"><a href="view_schools.aspx">Approved Schools</a></li>
+                                        <li id="li_pending_schools"><a href="view_schools.aspx?action=pending">Pending Schools</a></li>
+                                    </ul>
+                                </li>
+                                <li id="li_teachers" style="display:none;">
+                                    <a href="#">Teachers <span class="fa arrow"></span></a>
+                                    <ul id="ul_teachers" class="nav nav-third-level collapse">
+                                        <li id="li_approved_teachers"><a href="view_teachers.aspx">Approved Teachers</a></li>
+                                        <li id="li_pending_teachers"><a href="view_teachers.aspx?action=pending">Pending Teachers</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="view_users.aspx">Retail Users</a></li>
+                                <li><a href="notifyme_users.aspx">Notify me users</a></li>
+                                <li><a href="subs_newsletters.aspx">Subscribed user Emails</a></li>
+                                <li><a href="UserUploadedBookList.aspx">Users Uploaded BookList</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-shopping-cart"></i><span class="nav-label">E-Commerce</span><span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="cartlist.aspx">User Carts</a></li>
+                                <li><a href="wishlist.aspx">User Wishlist</a></li>   
+                                <li><a href="orders.aspx">Successfull Orders</a></li>
+                                <li style="display:none;"><a href="Monthwise_Orders.aspx">Month Wise Orders</a></li>
+                                <li><a href="adminhome.aspx?TYPE=PENDINGORDER">Pending Orders</a></li>
+                                <li><a href="adminhome.aspx?TYPE=PENDINGREVIEW">Pending Reviews</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-book "></i><span class="nav-label">Products</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">                                                                
+                                <li><a href="product_list.aspx">Manage Product Offers</a></li>
+                                <li><a href="SpecialPriceList.aspx">Product Offer List</a></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="#"><i class="fa fa-picture-o"></i><span class="nav-label">Promotion</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="slider.aspx">Big Slider first</a></li>
+                                <li><a href="home-promotion.aspx">Homepage Sliders</a></li>
+                                <li><a href="slider2.aspx" style="display:none;">Big Slider Second</a></li>
+                                <li><a href="select_banner.aspx">Banners</a></li>
+                                <li><a href="TodayQuote.aspx">Quote of the Day</a></li>
+                                <li><a href="NewLaunch.aspx">Manage New Launch</a></li>
+                                <li><a href="UploadSchoolLogo.aspx" >Upload School logo</a></li>
+                                <li><a href="uploadSchoolClassLogo.aspx"  >Upload Class logo</a></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="#"><i class="fa fa-wrench"></i><span class="nav-label">Configuration</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="menu.aspx">Menu</a></li>
+                                <li><a href="city_wise_shipping.aspx" style="display:none;">Shipping Setting</a></li>
+                                <li><a href="ManageTypeWiseShipping.aspx">Shipping Area/Location</a></li>
+                                <li><a href="ManageQty.aspx">Manage Qty</a></li>
+                                <li style="display:none;"><a href="ExamNotification.aspx">Exam Notification</a></li>
+                                <%--<li><a href="shipping-setting.aspx">Delivery Info</a></li>--%>
+                                <%--<li><a href="categories.aspx">Categories</a></li>
+                                <li><a href="subjects.aspx">Subjects</a></li>--%>
+                                <%--<li><a href="classes.aspx">Classes</a></li>--%>
+                                <%--<li><a href="locations.aspx">Locations</a></li>--%>
+                                <li><a href="media.aspx" style="display:none;">Media Manager</a></li>
+                                <%--<li><a href="emailsmsinfo.aspx">Email Integration</a></li>--%>
+                                <li><a href="topics.aspx">Footer Topics</a></li>
+                                <li style="display:none;"><a href="conversionrate.aspx">Add Conversion Rate</a></li>
+                                <li style="display:none;"><a href="change_password.aspx">Change Password</a></li>
+                                <%--<li><a class="modalButton" data-toggle="modal" data-target="#bs_modal_site_offline">Make Site Offline</a></li>--%>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="/" target="_blank"><i class="fa fa-globe"></i><span class="nav-label">View Web App</span></a>
+                        </li>
+                    </ul>
+
+                </div>
+            </nav>
+
+            <div id="page-wrapper" class="gray-bg">
+                <div class="row border-bottom">
+                    <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0">
+                        <div class="navbar-header">
+                            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i></a>
+                            <div role="search" class="navbar-form-custom">
+                                <div class="form-group">
+                                    <input type="text" placeholder="" class="form-control" name="top-search" id="top-search">
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="nav navbar-top-links navbar-right">
+                            <li>
+                                <span class="m-r-sm text-muted welcome-message">Welcome to STS Admin.</span>
+                            </li>
+
+                            <li>
+                                <asp:LinkButton ID="lbl_logout" OnClick="lbl_logout_Click" CausesValidation="false" runat="server"><i class="fa fa-sign-out"></i>Log out</asp:LinkButton>
+                            </li>
+                        </ul>
+
+                    </nav>
+                </div>
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+                <div class="footer"  >
+                    <asp:PlaceHolder ID="ph_msg" runat="server"></asp:PlaceHolder>
+                    <div class="pull-left" >
+                        <strong>Powered By</strong> <a target="_blank" href="https://springtimesoftware.net">Spring Time Software </a>&copy; <%:DateTime.Now.Year %>
+                    </div>
+                    <div class="pull-right hidden-xs">
+                        <strong>Bookstore Version 1.60</strong>
+                    </div>
+                    <div class="text-center">
+                        <%:string.Format("{0:dddd, MMMM, yyyy hh:mm tt}",DateTime.Now) %>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal fade" id="bs_modal_site_offline">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="close-button">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="row">
+                            <h3 class="h3 text-center">Do you really want to make your WebApp offline ?</h3>
+                            <hr />
+                            <div class="col-sm-6 text-center">
+                                <asp:LinkButton ID="lb_site_offline_yes" runat="server" OnClick="lb_site_offline_yes_Click"
+                                    CausesValidation="false"
+                                    CssClass="btn btn-primary"><i class="fa fa-check"></i>&nbsp;Yes</asp:LinkButton>
+                            </div>
+                            <div class="col-sm-6 text-center ">
+                                <a data-dismiss="modal" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;No</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+    </form>
+   
+
+    <asp:ContentPlaceHolder ID="scripts" runat="server"></asp:ContentPlaceHolder>
+
+
+    
+
+</body>
+
+</html>
+
