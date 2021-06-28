@@ -29,7 +29,7 @@
     <link href="css/customecss/styleslogin.css" rel="stylesheet" />
     <script src="js/vendor/jquery-1.12.0.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
-    <link href="css/Ver_1.1/styleDcbooks.css" rel="stylesheet" /> 
+    <link href="css/Ver_1.0/styleDcbooks.css" rel="stylesheet" /> 
     <link href="css/customecss/homeDCbooks.css" rel="stylesheet" />
     <link href="css/customecss/homrPage.css" rel="stylesheet" />
     <link href="admin-assets/css/plugins/toastr/toastr.min.css" rel="stylesheet" />

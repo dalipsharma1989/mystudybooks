@@ -6,7 +6,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     
-    <%--<style>
+<%-- <style type=''>
         .su-ph{
             margin-left: 16%;
         }
@@ -289,7 +289,7 @@
 					</div>
 
                    <%-- new code--%>
-                    <div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-sm-offset-3 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-sm-offset-3 col-md-6 col-sm-12 col-xs-12" style="padding: 15px 0;">
 						<div  class="login-form">
                             <div style="text-align:center;padding-top:40px" class="">
                                 <h3 style="font-size:18px">SIGN UP NOW!</h3>
@@ -370,7 +370,8 @@
                               </div>
                             <div class="">
                        <div class="account-btn">
-                           <asp:Button ID="btnSignUp" ValidationGroup="memberSignUp"  CssClass="btn-primary" OnClientClick="checkControlforValidation()" OnClick="btnSignUp_Click" runat="server" Text="Create Account"/>
+                           <asp:Button ID="btnSignUp" ValidationGroup="memberSignUp"  CssClass="btn-primary" OnClientClick="disableRegisterButton();" runat="server" Text="Create Account"/>
+                           <asp:Button ID="btn_click" ValidationGroup="memberSignUp" class="btn btn-success hidden" OnClick="btnSignUp_Click"   runat="server" Text="Create Account" />
                            <%--<input name="" type="submit" value="Sign up now" class="blulogin">--%>
                        </div>
                         <div class="col-md-6 text-right"></div>
@@ -879,7 +880,7 @@
     <!--CONTENT END-->
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="scripts" runat="Server">
-    <style>
+    <style type="text/css">
         .chosen-select{
             width : 100%;
         }
@@ -913,6 +914,62 @@
                 $("#div_teacher_document").hide(500, 'swing');
             }
         }
+
+        function disableRegisterButton() {
+            //alert("are you sure to create an account"); 
+            //$("#ContentPlaceHolder1_btnSignUp").attr('disabled', 'true');//.css("disabled", "disabled");
+
+            var name = $("#ContentPlaceHolder1_textName").val();
+            var Email = $("#ContentPlaceHolder1_textEmail").val();
+            var phone = $("#ContentPlaceHolder1_textPhone").val();
+            var pwd = $("#ContentPlaceHolder1_textPassword").val();
+            var cnfpwd = $("#ContentPlaceHolder1_textConfirmPassword").val();
+            //var addrss = $("#ContentPlaceHolder1_textAddress").val();
+            //var postcode = $("#ContentPlaceHolder1_textPinCode").val();
+            //var contry = $("#ContentPlaceHolder1_dd_Country").val();
+            //var state = $("#ContentPlaceHolder1_dd_State").val();
+            //var city = $("#ContentPlaceHolder1_dd_City").val();
+
+            if (name == "") {
+                alert("Please Enter Name");
+                return false;
+            }
+            if (Email == "") {
+                alert("Please Enter Email");
+                return false;
+            }
+            if (phone == "") {
+                alert("Please Enter Phone");
+                return false;
+            }
+            if (pwd == "") {
+                alert("Please Enter password");
+                return false;
+            }
+            if (cnfpwd == "") {
+                alert("Please Enter Confirm Password");
+                return false;
+            }
+             
+            if (pwd != cnfpwd) {
+                alert("Please make same password and confirm password");
+                return false;
+            }
+
+
+            var user_Res = confirm("Do you want to continue to create an account with Email - " + Email + " and Mobile/Phone No - " + phone + " ?");
+
+            if (user_Res == true) {
+                $("#ContentPlaceHolder1_btnSignUp").attr('disabled', true);
+                $("#ContentPlaceHolder1_btn_click").trigger("click");
+            }
+            else {
+                $("#ContentPlaceHolder1_btnSignUp").attr('disabled', false);
+                return false;
+            }
+        }
+
+
     </script>
 </asp:Content>
 
